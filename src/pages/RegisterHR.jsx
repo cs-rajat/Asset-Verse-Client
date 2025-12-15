@@ -1,37 +1,44 @@
-import React, { useState, useContext } from 'react';
-import API, { setAuthToken } from '../api/api';
+import React, { useState } from 'react';
+import API from '../api/api';
 import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../providers/AuthProvider';
+import { uploadImageToImgBB } from '../utils/imageUpload';
 
 export default function RegisterHR() {
   const [form, setForm] = useState({ name: '', email: '', password: '', companyName: '', companyLogo: '', dateOfBirth: '' });
-  const { createUser, updateUserProfile, loading } = useContext(AuthContext);
+  const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const nav = useNavigate();
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const imageUrl = await uploadImageToImgBB(file);
+      setForm({ ...form, companyLogo: imageUrl });
+    } catch (error) {
+      alert('Image upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const submit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      // 1. Create User in Firebase
-      await createUser(form.email, form.password);
+      // Register HR user
+      const response = await API.post('/auth/register/hr', form);
 
-      // 2. Update Firebase Profile
-      await updateUserProfile(form.name, form.companyLogo);
-
-      // 3. Create User in MongoDB
-      const dbUser = {
-        ...form,
-        role: 'hr'
-      };
-      await API.post('/users', dbUser);
-
-      // 4. Get JWT Token
-      const { data } = await API.post('/auth/jwt', { email: form.email });
-      localStorage.setItem('token', data.token);
-      setAuthToken(data.token);
-
-      nav('/dashboard/hr');
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        nav('/dashboard/hr');
+      }
     } catch (err) {
-      alert(err.response?.data?.msg || err.message || 'Error');
+      alert(err.response?.data?.msg || 'Registration failed');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -81,11 +88,25 @@ export default function RegisterHR() {
             </div>
 
             <div className="form-control">
-              <label className="label"><span className="label-text font-semibold">Company Logo URL</span></label>
-              <input type="url" className="input input-bordered bg-base-50 focus:bg-white transition-all" placeholder="https://..." value={form.companyLogo} onChange={e => setForm({ ...form, companyLogo: e.target.value })} required />
+              <label className="label"><span className="label-text font-semibold">Company Logo</span></label>
+              <input
+                type="file"
+                accept="image/*"
+                className="file-input file-input-bordered w-full bg-base-50 focus:bg-white transition-all"
+                onChange={handleImageUpload}
+                disabled={uploading}
+              />
+              {uploading && <span className="text-xs text-primary mt-1">Uploading image...</span>}
+              {form.companyLogo && (
+                <div className="mt-2">
+                  <img src={form.companyLogo} alt="Company Logo Preview" className="w-20 h-20 object-cover rounded-lg border-2 border-primary/20" />
+                </div>
+              )}
             </div>
 
-            <button disabled={loading} className="btn btn-primary w-full btn-lg mt-4 shadow-lg hover:shadow-primary/50 transition-all text-lg">Register & Start</button>
+            <button disabled={loading || uploading || !form.companyLogo} className="btn btn-primary w-full btn-lg mt-4 shadow-lg hover:shadow-primary/50 transition-all text-lg">
+              {loading ? 'Registering...' : 'Register & Start'}
+            </button>
           </form>
 
           <div className="text-center mt-6">
