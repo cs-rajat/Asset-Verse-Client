@@ -10,8 +10,8 @@ export default function AllRequests() {
         try { const { data } = await API.get('/requests/hr'); setRequests(data); } catch (e) { console.error(e); }
     }
 
-    const approve = async id => { try { await API.put(`/requests/${id}/approve`); alert('Approved'); loadRequests(); } catch (e) { alert(e.response?.data?.msg || 'Error'); } }
-    const reject = async id => { try { await API.put(`/requests/${id}/reject`); alert('Rejected'); loadRequests(); } catch (e) { alert(e.response?.data?.msg || 'Error'); } }
+    const approve = async id => { try { await API.patch(`/requests/approve/${id}`); alert('Approved'); loadRequests(); } catch (e) { alert(e.response?.data?.msg || 'Error'); } }
+    const reject = async id => { try { await API.patch(`/requests/reject/${id}`); alert('Rejected'); loadRequests(); } catch (e) { alert(e.response?.data?.msg || 'Error'); } }
 
     return (
         <div>
