@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import API from '../api/api';
+import { AuthContext } from '../providers/AuthProvider';
 
 const PACKAGES = [
   { id: 'basic', name: 'Basic', employeeLimit: 5, price: 5 },
@@ -7,25 +8,25 @@ const PACKAGES = [
   { id: 'premium', name: 'Premium', employeeLimit: 20, price: 15 }
 ];
 
-export default function UpgradePackage(){
+export default function UpgradePackage() {
   const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const handleBuy = async (pkg) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const hrEmail = token ? JSON.parse(atob(token.split('.')[1])).email : null;
       const { data } = await API.post('/stripe/create-session', {
-        hrEmail,
+        hrEmail: user?.email,
         packageId: pkg.id,
         packageName: pkg.name,
         employeeLimit: pkg.employeeLimit,
         amount: pkg.price
       });
+      console.log('Stripe Session URL:', data.url);
       window.location.href = data.url;
     } catch (err) {
       console.error(err);
-      alert('Checkout failed');
+      alert(err.response?.data?.msg || 'Checkout failed');
     } finally { setLoading(false); }
   };
 
