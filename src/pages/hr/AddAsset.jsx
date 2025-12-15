@@ -12,7 +12,7 @@ export default function AddAsset() {
             await API.post('/assets', form);
             alert('Asset added successfully!');
             nav('/dashboard/hr');
-        } catch (err) { alert(err.response?.data?.msg || 'Error adding asset'); }
+        } catch (err) { alert(err.response?.data?.message || err.response?.data?.msg || 'Error adding asset'); }
     }
 
     return (
