@@ -41,7 +41,7 @@ export default function Login() {
 
       <div className="card w-full max-w-md shadow-2xl bg-white/70 backdrop-blur-xl border border-white/50 relative z-10">
         <div className="card-body p-8">
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <div className="inline-block p-3 rounded-2xl bg-base-200 mb-4">
               <span className="text-4xl">🔐</span>
             </div>

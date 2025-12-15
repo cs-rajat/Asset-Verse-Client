@@ -48,7 +48,7 @@ function App() {
             <Route path="employees" element={<MyEmployeeList />} />
           </Route>
           <Route path="/dashboard/employee" element={<PrivateRoute><DashboardEmployee /></PrivateRoute>}>
-            <Route index element={<RequestAsset />} /> {/* Default to Request Asset? OR My Assets? Navbar links request asset to /dashboard/employee/request, wait. */}
+            <Route index element={<RequestAsset />} />
             <Route path="request" element={<RequestAsset />} />
           </Route>
           <Route path="/my-assets" element={<PrivateRoute><MyAssets /></PrivateRoute>} />

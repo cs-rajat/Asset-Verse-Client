@@ -2,27 +2,16 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
+import API from '../api/api';
+
 export default function Home() {
-  const [packages] = useState([
-    {
-      name: "Basic",
-      employeeLimit: 5,
-      price: 5,
-      features: ["Asset Tracking", "Employee Management", "Basic Support"]
-    },
-    {
-      name: "Standard",
-      employeeLimit: 10,
-      price: 8,
-      features: ["All Basic features", "Advanced Analytics", "Priority Support"]
-    },
-    {
-      name: "Premium",
-      employeeLimit: 20,
-      price: 15,
-      features: ["All Standard features", "Custom Branding", "24/7 Support"]
-    }
-  ]);
+  const [packages, setPackages] = useState([]);
+
+  React.useEffect(() => {
+    API.get('/public/packages')
+      .then(res => setPackages(res.data))
+      .catch(err => console.error("Failed to load packages", err));
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
