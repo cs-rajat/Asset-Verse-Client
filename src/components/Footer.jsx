@@ -45,10 +45,10 @@ export default function Footer() {
                                 📧 <a href="mailto:support@assetverse.com" className="hover:text-primary">support@assetverse.com</a>
                             </p>
                             <p className="flex items-center gap-2">
-                                📞 <a href="tel:+15550123456" className="hover:text-primary">+1 (555) 012-3456</a>
+                                📞 <a href="tel:+8801710440718" className="hover:text-primary">01710440718</a>
                             </p>
                             <p className="flex items-center gap-2">
-                                📍 123 Corporate Blvd, Tech City
+                                📍 Dhaka Bangladesh
                             </p>
                         </div>
                     </div>
