@@ -1,37 +1,26 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import API, { setAuthToken } from '../api/api';
 import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../providers/AuthProvider';
+
 
 export default function RegisterEmployee() {
   const [form, setForm] = useState({ name: '', email: '', password: '', dateOfBirth: '' });
-  const { createUser, updateUserProfile, loading } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   const nav = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
     try {
-      // 1. Create User in Firebase
-      await createUser(form.email, form.password);
+      // 3. Create User via Backend Auth API (handles both MongoDB and JWT)
+      const { data } = await API.post('/auth/register/employee', form);
 
-      // 2. Update Firebase Profile
-      await updateUserProfile(form.name);
-
-      // 3. Create User in MongoDB
-      const dbUser = {
-        ...form,
-        role: 'employee'
-      };
-      await API.post('/users', dbUser);
-
-      // 4. Get JWT Token
-      const { data } = await API.post('/auth/jwt', { email: form.email });
-      localStorage.setItem('token', data.token);
-      setAuthToken(data.token);
-
-      nav('/dashboard/employee');
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        setAuthToken(data.token);
+        nav('/dashboard/employee');
+      }
     }
-    catch (err) { alert(err.response?.data?.msg || err.message || 'Error'); }
+    catch (err) { alert(err.response?.data?.msg || 'Registration failed'); }
   }
 
   return (

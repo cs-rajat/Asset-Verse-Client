@@ -16,6 +16,17 @@ export default function MyAssets() {
     } catch (err) { console.error(err); alert('Failed to load assigned assets'); }
   };
 
+  const handleReturn = async (id) => {
+    if (!window.confirm("Are you sure you want to return this asset?")) return;
+    try {
+      await API.patch(`/assigned/return/${id}`);
+      alert("Asset returned successfully");
+      fetchPage(page);
+    } catch (err) {
+      alert(err.response?.data?.msg || "Failed to return asset");
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -25,7 +36,7 @@ export default function MyAssets() {
       {items.length === 0 ? <p>No assets assigned.</p> : (
         <div className="overflow-x-auto">
           <table className="table w-full">
-            <thead><tr><th>Asset</th><th>Company</th><th>Type</th><th>Assigned</th><th>Status</th></tr></thead>
+            <thead><tr><th>Asset</th><th>Company</th><th>Type</th><th>Assigned</th><th>Status</th><th>Action</th></tr></thead>
             <tbody>
               {items.map(it => (
                 <tr key={it._id}>
@@ -39,6 +50,11 @@ export default function MyAssets() {
                   <td>{it.assetType}</td>
                   <td>{new Date(it.assignmentDate).toLocaleDateString()}</td>
                   <td>{it.status}</td>
+                  <td>
+                    {it.assetType === 'Returnable' && it.status === 'assigned' && (
+                      <button className="btn btn-warning btn-xs" onClick={() => handleReturn(it._id)}>Return</button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
