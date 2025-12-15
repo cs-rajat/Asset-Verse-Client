@@ -27,7 +27,6 @@ export default function Home() {
     <div className="flex flex-col font-sans overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-base-100 via-base-200 to-indigo-50/50">
-        {/* Animated Background Blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob"></div>
           <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-secondary/20 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob animation-delay-2000"></div>
@@ -75,7 +74,7 @@ export default function Home() {
                 <img className="w-10 h-10 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=8" alt="User" />
                 <div className="w-10 h-10 rounded-full border-2 border-white bg-base-200 flex items-center justify-center text-xs">+5k</div>
               </div>
-              <span>Trust by 500+ Enterprises</span>
+              <span>Trusted by 500+ Enterprises</span>
             </motion.div>
           </motion.div>
 
@@ -160,7 +159,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About / Features Section */}
+      {/* Features Showcase Section */}
       <section className="py-32 bg-base-100 relative">
         <div className="container mx-auto px-4">
           <motion.div
@@ -170,26 +169,42 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-center mb-20 max-w-3xl mx-auto"
           >
-            <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">Enterprise-Grade <span className="text-primary">Reliability</span></h2>
-            <p className="text-slate-500 text-lg">Designed for modern corporations. AssetVerse ensures comprehensive control, security, and scalability for your entire inventory.</p>
+            <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">Everything you need to <span className="text-primary">scale</span></h2>
+            <p className="text-slate-500 text-lg">A complete suite of tools designed for modern asset management.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* 6 Grid Features */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
                 icon: "📊",
                 title: "Centralized Inventory",
-                desc: "Maintain a single source of truth for all physical assets. Track serial numbers, procurement dates, and warranties in one secure dashboard."
+                desc: "Single source of truth for all assets. Track serials, warranties, and status in real-time."
               },
               {
                 icon: "⚡",
                 title: "Automated Workflows",
-                desc: "Eliminate manual paperwork. Streamline asset requests, approvals, and assignments with intelligent automation to save HR time."
+                desc: "Streamline requests and approvals. Let intelligent automation handle the busy work."
               },
               {
                 icon: "🛡️",
                 title: "Audit & Compliance",
-                desc: "Generate instant PDF reports for audits. Maintain a complete immutable history of asset movement, assignments, and returns."
+                desc: "Generate PDF reports instantly. Maintain an immutable history for absolute compliance."
+              },
+              {
+                icon: "🔔",
+                title: "Smart Notifications",
+                desc: "Get alerted on low stock, return dates, and warranty expirations automatically."
+              },
+              {
+                icon: "📱",
+                title: "Mobile Friendly",
+                desc: "Manage assets on the go. Optimized for all devices from smartphones to tablets."
+              },
+              {
+                icon: "🔐",
+                title: "Role-Based Security",
+                desc: "Granular access controls ensure data is seen only by those who need it."
               }
             ].map((feature, i) => (
               <motion.div
@@ -197,19 +212,87 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.2 }}
-                className="group p-8 rounded-[2rem] bg-base-100 border border-base-200 hover:border-primary/20 hover:shadow-2xl transition-all duration-300"
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="group p-8 rounded-[2rem] bg-base-100 border border-base-200 hover:border-primary/20 hover:shadow-xl transition-all duration-300"
               >
-                <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform shadow-sm">{feature.icon}</div>
-                <h3 className="text-2xl font-bold font-heading mb-4 text-neutral">{feature.title}</h3>
-                <p className="text-slate-500 leading-relaxed font-light">{feature.desc}</p>
+                <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform shadow-sm">{feature.icon}</div>
+                <h3 className="text-xl font-bold font-heading mb-3 text-neutral">{feature.title}</h3>
+                <p className="text-slate-500 leading-relaxed font-light text-sm">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Section - Dark */}
+      {/* Testimonials / Stats Section */}
+      <section className="py-32 bg-slate-50 relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-white rounded-full blur-3xl opacity-60 pointer-events-none"></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold mb-6">
+              TRUSTED BY 100+ COMPANIES
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold font-heading text-neutral">Empowering modern teams</h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-20">
+            {[
+              {
+                quote: "AssetVerse completely transformed how we handle equipment. Using spreadsheets was a nightmare, but now everything is automated. Highly recommended!",
+                author: "Sarah Jenkins",
+                role: "HR Director, TechFlow Inc.",
+                img: "https://i.pravatar.cc/100?img=5"
+              },
+              {
+                quote: "The audit reports alone are worth the subscription. We passed our ISO compliance check with zero stress thanks to the detailed history tracking.",
+                author: "Michael Chen",
+                role: "Operations Lead, InnovateCorp",
+                img: "https://i.pravatar.cc/100?img=11"
+              }
+            ].map((testi, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="bg-white p-10 rounded-[2.5rem] shadow-xl border border-slate-100"
+              >
+                <div className="flex gap-1 mb-6">
+                  {[1, 2, 3, 4, 5].map(star => <span key={star} className="text-yellow-400">★</span>)}
+                </div>
+                <p className="text-lg text-slate-600 italic mb-8">"{testi.quote}"</p>
+                <div className="flex items-center gap-4">
+                  <img src={testi.img} alt={testi.author} className="w-12 h-12 rounded-full border-2 border-slate-100" />
+                  <div>
+                    <div className="font-bold text-neutral">{testi.author}</div>
+                    <div className="text-sm text-slate-400">{testi.role}</div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto border-t border-slate-200 pt-16">
+            {[
+              { label: "Assets Tracked", value: "50k+" },
+              { label: "Companies", value: "100+" },
+              { label: "Uptime", value: "99.9%" },
+              { label: "Support", value: "24/7" },
+            ].map((stat, i) => (
+              <div key={i} className="text-center">
+                <div className="text-3xl md:text-4xl font-black text-indigo-600 mb-2">{stat.value}</div>
+                <div className="text-sm font-bold text-slate-400 uppercase tracking-wider">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* Pricing Section */}
       <section className="py-32 bg-neutral text-neutral-content relative overflow-hidden">
         {/* Abstract Shapes */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
