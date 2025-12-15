@@ -37,17 +37,19 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Newsletter */}
+                    {/* Contact Us */}
                     <div>
-                        <h3 className="footer-title text-lg opacity-100 font-heading">Stay Updated</h3>
-                        <div className="form-control w-full">
-                            <label className="label">
-                                <span className="label-text text-neutral-content">Enter your email address</span>
-                            </label>
-                            <div className="relative">
-                                <input type="text" placeholder="username@site.com" className="input input-bordered w-full pr-16 text-black" />
-                                <button className="btn btn-primary absolute top-0 right-0 rounded-l-none">Subscribe</button>
-                            </div>
+                        <h3 className="footer-title text-lg opacity-100 font-heading">Contact Us</h3>
+                        <div className="flex flex-col gap-3 opacity-80 text-sm">
+                            <p className="flex items-center gap-2">
+                                📧 <a href="mailto:support@assetverse.com" className="hover:text-primary">support@assetverse.com</a>
+                            </p>
+                            <p className="flex items-center gap-2">
+                                📞 <a href="tel:+15550123456" className="hover:text-primary">+1 (555) 012-3456</a>
+                            </p>
+                            <p className="flex items-center gap-2">
+                                📍 123 Corporate Blvd, Tech City
+                            </p>
                         </div>
                     </div>
                 </div>
