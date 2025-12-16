@@ -8,19 +8,32 @@ export default function Profile() {
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [form, setForm] = useState({ name: '', profileImage: '', dateOfBirth: '' });
+    const [affiliation, setAffiliation] = useState(null);
 
     useEffect(() => {
         loadProfile();
     }, [user]);
 
     const loadProfile = async () => {
+        if (!user) return;
         try {
-            const { data } = await API.get('/users/me');
-            setDbUser(data);
+            const [userRes, affiliationRes] = await Promise.all([
+                API.get('/users/me'),
+                API.get('/users/affiliations')
+            ]);
+
+            const userData = userRes.data;
+            setDbUser(userData);
+
+            // For employee showing connection
+            if (affiliationRes.data && affiliationRes.data.length > 0) {
+                setAffiliation(affiliationRes.data[0]);
+            }
+
             setForm({
-                name: data.name || user?.displayName || '',
-                profileImage: data.profileImage || user?.photoURL || '',
-                dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth).toISOString().split('T')[0] : ''
+                name: userData.name || user?.displayName || '',
+                profileImage: userData.profileImage || user?.photoURL || '',
+                dateOfBirth: userData.dateOfBirth ? new Date(userData.dateOfBirth).toISOString().split('T')[0] : ''
             });
             setLoading(false);
         } catch (err) { console.error(err); setLoading(false); }
@@ -47,7 +60,7 @@ export default function Profile() {
 
     return (
         <div className="container mx-auto p-4 max-w-2xl">
-            <div className="card bg-base-100 shadow-xl">
+            <div className="card bg-base-100 shadow-xl border border-base-200">
                 <div className="card-body">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-3xl font-bold">My Profile</h2>
@@ -64,7 +77,14 @@ export default function Profile() {
                         </div>
                         <h3 className="text-2xl font-bold mt-4">{dbUser?.name}</h3>
                         <p className="text-gray-500">{user?.email}</p>
-                        <div className="badge badge-lg badge-secondary mt-2 capitalize">{dbUser?.role}</div>
+                        <div className="flex gap-2 mt-2">
+                            <div className="badge badge-lg badge-secondary capitalize">{dbUser?.role}</div>
+                            {affiliation && (
+                                <div className="badge badge-lg badge-outline gap-1">
+                                    🏢 {affiliation.companyName}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {editing ? (
@@ -97,11 +117,21 @@ export default function Profile() {
                                 <span className="font-semibold">Date of Birth</span>
                                 <span>{dbUser?.dateOfBirth ? new Date(dbUser.dateOfBirth).toLocaleDateString() : 'N/A'}</span>
                             </div>
+                            {/* Show Company if Employee */}
+                            {affiliation && (
+                                <div className="flex justify-between border-b pb-2">
+                                    <span className="font-semibold">Company</span>
+                                    <div className="flex items-center gap-2">
+                                        {affiliation.companyLogo && <img src={affiliation.companyLogo} className="w-6 h-6 rounded" alt="" />}
+                                        <span>{affiliation.companyName}</span>
+                                    </div>
+                                </div>
+                            )}
+
                             {dbUser?.role === 'hr' && (
                                 <div className="flex justify-between border-b pb-2">
-                                    <span className="font-semibold">Items in Stock</span>
-                                    <span>{dbUser?.packageLimit || 0}</span>
-                                    {/* Using packageLimit as proxy for now or need to fetch stats */}
+                                    <span className="font-semibold">Package Limit</span>
+                                    <div className="badge badge-accent badge-outline">{dbUser?.packageLimit || 0} Employees</div>
                                 </div>
                             )}
                         </div>

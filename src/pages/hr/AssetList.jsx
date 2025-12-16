@@ -9,6 +9,8 @@ export default function AssetList() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('');
+    const [filterStock, setFilterStock] = useState(''); // New stock filter
+    const [sortConfig, setSortConfig] = useState(null); // Sorting
 
     const loadData = async () => {
         try {
@@ -25,7 +27,7 @@ export default function AssetList() {
     useEffect(() => { loadData(); }, []);
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure?")) return;
+        if (!window.confirm("Are you sure? This action cannot be undone.")) return;
         try {
             await API.delete(`/assets/${id}`);
             loadData();
@@ -38,11 +40,28 @@ export default function AssetList() {
     const availableQuantity = assets.reduce((sum, a) => sum + a.availableQuantity, 0);
     const pendingRequests = requests.length;
 
-    const filteredAssets = assets.filter(a => {
+    let filteredAssets = assets.filter(a => {
         const matchName = a.productName.toLowerCase().includes(searchTerm.toLowerCase());
         const matchType = filterType ? a.productType === filterType : true;
-        return matchName && matchType;
+        const matchStock = filterStock ? (filterStock === 'Available' ? a.availableQuantity > 0 : a.availableQuantity === 0) : true;
+        return matchName && matchType && matchStock;
     });
+
+    if (sortConfig) {
+        filteredAssets.sort((a, b) => {
+            if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'ascending' ? -1 : 1;
+            if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'ascending' ? 1 : -1;
+            return 0;
+        });
+    }
+
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
 
     if (loading) return <div className="text-center mt-20"><span className="loading loading-dots loading-lg"></span></div>;
 
@@ -62,23 +81,16 @@ export default function AssetList() {
                 <div className="card-body p-6">
                     {/* Filters */}
                     <div className="flex flex-col md:flex-row justify-between mb-6 gap-4 items-center bg-base-50 p-4 rounded-xl">
-                        <div className="form-control w-full md:w-auto">
-                            <div className="input-group">
-                                <input
-                                    type="text"
-                                    placeholder="Search by name..."
-                                    className="input input-bordered w-full md:w-80 bg-white"
-                                    value={searchTerm}
-                                    onChange={e => setSearchTerm(e.target.value)}
-                                />
-                                <button className="btn btn-square btn-ghost bg-base-200">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex gap-4 w-full md:w-auto">
+                        <div className="flex flex-wrap gap-4 w-full md:w-auto">
+                            <input
+                                type="text"
+                                placeholder="Search by name..."
+                                className="input input-bordered w-full md:w-64 bg-white"
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                            />
                             <select
-                                className="select select-bordered w-full md:w-auto bg-white"
+                                className="select select-bordered bg-white"
                                 value={filterType}
                                 onChange={e => setFilterType(e.target.value)}
                             >
@@ -86,22 +98,32 @@ export default function AssetList() {
                                 <option value="Returnable">Returnable</option>
                                 <option value="Non-returnable">Non-returnable</option>
                             </select>
-
-                            <Link to="/dashboard/hr/add-asset" className="btn btn-primary gap-2 w-full md:w-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
-                                Add Asset
-                            </Link>
+                            <select
+                                className="select select-bordered bg-white"
+                                value={filterStock}
+                                onChange={e => setFilterStock(e.target.value)}
+                            >
+                                <option value="">All Stock Status</option>
+                                <option value="Available">Available</option>
+                                <option value="Out of Stock">Out of Stock</option>
+                            </select>
                         </div>
+
+                        <Link to="/dashboard/hr/add-asset" className="btn btn-primary gap-2 w-full md:w-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                            Add Asset
+                        </Link>
                     </div>
 
                     <div className="overflow-x-auto rounded-lg border border-base-200">
                         <table className="table table-zebra w-full">
                             <thead className="bg-base-200/50 text-base-content/70">
                                 <tr>
-                                    <th className="font-bold uppercase tracking-wider">Asset</th>
-                                    <th className="font-bold uppercase tracking-wider">Type</th>
-                                    <th className="font-bold uppercase tracking-wider">Availability</th>
-                                    <th className="font-bold uppercase tracking-wider">Date Added</th>
+                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('productName')}>Asset Name ↕</th>
+                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('productType')}>Type ↕</th>
+                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('productQuantity')}>Total Qty ↕</th>
+                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('availableQuantity')}>Available ↕</th>
+                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('dateAdded')}>Date Added ↕</th>
                                     <th className="font-bold uppercase tracking-wider text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -126,11 +148,11 @@ export default function AssetList() {
                                                 {asset.productType}
                                             </span>
                                         </td>
-                                        <td>
-                                            <div className="flex items-center gap-2">
-                                                <progress className={`progress w-20 ${asset.availableQuantity < 5 ? 'progress-error' : 'progress-success'}`} value={asset.availableQuantity} max={asset.productQuantity}></progress>
-                                                <span className="font-mono font-bold text-sm">{asset.availableQuantity} / {asset.productQuantity}</span>
-                                            </div>
+                                        <td className="font-mono font-bold text-center">{asset.productQuantity}</td>
+                                        <td className="font-mono font-bold text-center">
+                                            <span className={asset.availableQuantity === 0 ? 'text-error' : 'text-success'}>
+                                                {asset.availableQuantity}
+                                            </span>
                                         </td>
                                         <td className="text-sm">{new Date(asset.dateAdded).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</td>
                                         <td className="text-right">
@@ -146,7 +168,7 @@ export default function AssetList() {
                                     </tr>
                                 )) : (
                                     <tr>
-                                        <td colSpan="5" className="text-center py-20 text-gray-400">
+                                        <td colSpan="6" className="text-center py-20 text-gray-400">
                                             <div className="flex flex-col items-center">
                                                 <span className="text-6xl mb-4">🔍</span>
                                                 <span className="text-xl">No assets found</span>

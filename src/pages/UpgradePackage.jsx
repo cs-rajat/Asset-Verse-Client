@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import API from '../api/api';
 import { AuthContext } from '../providers/AuthProvider';
 
@@ -10,7 +10,17 @@ const PACKAGES = [
 
 export default function UpgradePackage() {
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState([]);
   const { user } = useContext(AuthContext);
+
+  useEffect(() => { fetchHistory(); }, []);
+
+  const fetchHistory = async () => {
+    try {
+      const { data } = await API.get('/stripe/history');
+      setHistory(data);
+    } catch (err) { console.error('Failed to load history', err); }
+  }
 
   const handleBuy = async (pkg) => {
     setLoading(true);
@@ -32,18 +42,59 @@ export default function UpgradePackage() {
 
   return (
     <div>
-      <h2 className="text-2xl mb-4">Upgrade Package</h2>
-      <div className="grid md:grid-cols-3 gap-4">
+      <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
+        <span>⚡</span> Upgrade Package
+      </h2>
+
+      {/* Packages Grid */}
+      <div className="grid md:grid-cols-3 gap-6 mb-12">
         {PACKAGES.map(p => (
-          <div className="card p-4" key={p.id}>
-            <h3 className="text-xl font-bold">{p.name}</h3>
-            <p>Employee limit: {p.employeeLimit}</p>
-            <p className="mb-3">${p.price} / month</p>
-            <button className="btn btn-primary" disabled={loading} onClick={() => handleBuy(p)}>
-              {loading ? 'Processing...' : 'Upgrade'}
-            </button>
+          <div className="card bg-base-100 shadow-xl border border-base-200 hover:border-primary transition-all" key={p.id}>
+            <div className="card-body items-center text-center">
+              <h3 className="card-title text-2xl font-bold">{p.name}</h3>
+              <div className="text-4xl font-black my-4">${p.price}<span className="text-sm font-normal text-gray-400">/mo</span></div>
+              <div className="badge badge-accent badge-outline mb-4">Up to {p.employeeLimit} employees</div>
+              <button className="btn btn-primary w-full" disabled={loading} onClick={() => handleBuy(p)}>
+                {loading ? <span className="loading loading-spinner"></span> : 'Upgrade Now'}
+              </button>
+            </div>
           </div>
         ))}
+      </div>
+
+      {/* Payment History */}
+      <div className="divider">Payment History</div>
+
+      <div className="card bg-base-100 shadow-lg border border-base-200">
+        <div className="card-body">
+          <h3 className="card-title text-lg mb-4">Transaction History</h3>
+          {history.length === 0 ? (
+            <p className="text-gray-500">No payment history available.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+                <thead>
+                  <tr>
+                    <th>Package</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Transaction ID</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {history.map((pay, idx) => (
+                    <tr key={idx}>
+                      <td className="font-bold">{pay.packageName} Package</td>
+                      <td>${pay.amount}</td>
+                      <td>{new Date(pay.paymentDate).toLocaleDateString()} {new Date(pay.paymentDate).toLocaleTimeString()}</td>
+                      <td className="font-mono text-xs opacity-70">{pay.transactionId || 'N/A'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

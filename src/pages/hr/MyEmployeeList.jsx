@@ -1,43 +1,127 @@
 import React, { useEffect, useState } from 'react';
 import API from '../../api/api';
+import { Link } from 'react-router-dom';
 
 export default function MyEmployeeList() {
     const [employees, setEmployees] = useState([]);
+    const [hrStats, setHrStats] = useState({ current: 0, limit: 0 });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => { loadData(); }, []);
 
     const loadData = async () => {
-        try { const { data } = await API.get('/users/employees'); setEmployees(data); } catch (e) { console.error(e); }
+        try {
+            // Parallel fetch: Employees List and HR Profile (for limits)
+            const [empRes, userRes] = await Promise.all([
+                API.get('/users/employees'),
+                API.get('/users/me')
+            ]);
+            setEmployees(empRes.data);
+            setHrStats({
+                current: empRes.data.length, // More accurate from list length
+                limit: userRes.data.packageLimit || 5
+            });
+            setLoading(false);
+        } catch (e) {
+            console.error(e);
+            setLoading(false);
+        }
     }
 
     const removeEmployee = async (id) => {
-        if (!window.confirm("Are you sure? Why remove them?")) return;
-        // Implementation logic for remove?
-        // For now just alert or call API if exists
-        alert("Feature to remove employee coming soon (API needed)");
+        if (!window.confirm("Are you sure? This will remove them from your team.")) return;
+        try {
+            await API.delete(`/users/affiliations/${id}`);
+            alert('Employee removed successfully.');
+            loadData();
+        } catch (err) {
+            alert(err.response?.data?.msg || 'Failed to remove employee');
+        }
     }
+
+    if (loading) return <div className="text-center mt-20"><span className="loading loading-spinner"></span></div>;
+
+    const usagePercentage = Math.min((hrStats.current / hrStats.limit) * 100, 100);
 
     return (
         <div>
-            <h2 className="text-3xl font-bold mb-6">My Team Members</h2>
+            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div>
+                    <h2 className="text-3xl font-bold flex items-center gap-3">
+                        <span>👥</span> My Team Members
+                    </h2>
+                    <p className="text-sm opacity-60 mt-1">Manage your team assignments</p>
+                </div>
+
+                {/* Usage Stats Card */}
+                <div className="card bg-base-100 shadow-md border border-base-200 px-6 py-2 flex flex-row items-center gap-4">
+                    <div className="flex flex-col">
+                        <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Employee Limit</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-2xl font-black text-primary">{hrStats.current}</span>
+                            <span className="text-gray-400">/ {hrStats.limit}</span>
+                        </div>
+                    </div>
+
+                    <div className="radial-progress text-primary text-xs" style={{ "--value": usagePercentage, "--size": "3rem" }}>
+                        {Math.round(usagePercentage)}%
+                    </div>
+
+                    {hrStats.current >= hrStats.limit && (
+                        <Link to="/dashboard/hr/upgrade-package" className="btn btn-warning btn-xs animate-pulse">
+                            Upgrade
+                        </Link>
+                    )}
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {employees.map(emp => (
-                    <div key={emp._id} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all">
+                    <div key={emp._id} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all border border-base-200">
                         <div className="card-body items-center text-center">
                             <div className="avatar">
                                 <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                                    <img src={emp.profileImage || "https://i.ibb.co/T0h284p/user-placeholder.png"} />
+                                    <img src={emp.profileImage || "https://i.ibb.co/T0h284p/user-placeholder.png"} alt="Profile" />
                                 </div>
                             </div>
                             <h3 className="card-title mt-4">{emp.name || emp.employeeName}</h3>
-                            <p className="text-gray-500">{emp.email || emp.employeeEmail}</p>
-                            <div className="card-actions mt-4">
-                                <button className="btn btn-error btn-outline btn-sm" onClick={() => removeEmployee(emp._id)}>Remove from Team</button>
+                            <p className="text-gray-500 text-sm">{emp.email || emp.employeeEmail}</p>
+
+                            <div className="stats shadow w-full mt-4 bg-base-50">
+                                <div className="stat py-2 px-1">
+                                    <div className="stat-title text-xs">Joined</div>
+                                    <div className="stat-value text-sm">
+                                        {emp.affiliationDate ? new Date(emp.affiliationDate).toLocaleDateString() : 'N/A'}
+                                    </div>
+                                </div>
+                                <div className="stat py-2 px-1">
+                                    <div className="stat-title text-xs">Assets</div>
+                                    <div className="stat-value text-sm text-primary">{emp.assetsCount || 0}</div>
+                                </div>
+                            </div>
+
+                            <div className="card-actions mt-6 w-full">
+                                <button className="btn btn-error btn-outline btn-sm w-full" onClick={() => removeEmployee(emp._id)}>
+                                    Remove from Team
+                                </button>
                             </div>
                         </div>
                     </div>
                 ))}
-                {employees.length === 0 && <p>No employees found.</p>}
+
+                {employees.length === 0 && (
+                    <div className="col-span-full text-center py-20 text-gray-400">
+                        <div className="flex flex-col items-center">
+                            <span className="text-6xl mb-4">🤷‍♂️</span>
+                            <span className="text-xl">No team members yet</span>
+                            <p>Share your join code or wait for requests.</p>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="mt-8 text-right text-sm text-gray-400">
+                Total Employees: {employees.length}
             </div>
         </div>
     )

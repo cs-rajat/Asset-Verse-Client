@@ -1,10 +1,31 @@
 import React, { useState } from 'react';
 import API from '../../api/api';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function AddAsset() {
     const [form, setForm] = useState({ productName: '', productType: 'Returnable', productQuantity: 1, productImage: '' });
+    const [uploading, setUploading] = useState(false);
     const nav = useNavigate();
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const res = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`, formData);
+            setForm({ ...form, productImage: res.data.data.url });
+        } catch (err) {
+            console.error('Upload failed', err);
+            alert('Image upload failed');
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -42,14 +63,22 @@ export default function AddAsset() {
                         </div>
 
                         <div className="form-control">
-                            <label className="label"><span className="label-text font-semibold">Product Image URL</span></label>
-                            <input
-                                className="input input-bordered bg-base-50 focus:bg-white transition-all"
-                                placeholder="https://..."
-                                value={form.productImage}
-                                onChange={e => setForm({ ...form, productImage: e.target.value })}
-                                required
-                            />
+                            <label className="label"><span className="label-text font-semibold">Product Image</span></label>
+                            <div className="flex items-center gap-4">
+                                <input
+                                    type="file"
+                                    className="file-input file-input-bordered w-full"
+                                    onChange={handleImageUpload}
+                                    accept="image/*"
+                                    required={!form.productImage}
+                                />
+                                {uploading && <span className="loading loading-spinner text-primary"></span>}
+                            </div>
+                            {form.productImage && (
+                                <div className="mt-4 relative w-full h-48 bg-base-50 rounded-lg overflow-hidden border border-base-200">
+                                    <img src={form.productImage} alt="Preview" className="w-full h-full object-contain" />
+                                </div>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -79,8 +108,11 @@ export default function AddAsset() {
                         </div>
 
                         <div className="pt-4">
-                            <button className="btn btn-primary w-full btn-lg shadow-lg hover:shadow-primary/50 transition-all font-bold">
-                                Add Asset
+                            <button
+                                className="btn btn-primary w-full btn-lg shadow-lg hover:shadow-primary/50 transition-all font-bold"
+                                disabled={uploading || !form.productImage}
+                            >
+                                {uploading ? 'Uploading Image...' : 'Add Asset'}
                             </button>
                         </div>
                     </form>

@@ -6,16 +6,34 @@ export default function RequestAsset() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('All');
 
+    // Modal State
+    const [selectedAsset, setSelectedAsset] = useState(null);
+    const [note, setNote] = useState('');
+    const [requesting, setRequesting] = useState(false);
+
     useEffect(() => { loadAssets(); }, []);
     const loadAssets = async () => { try { const { data } = await API.get('/assets'); setAssets(data.assets); } catch (e) { console.error(e); } }
 
-    const requestAsset = async (assetId, assetName) => {
+    const openRequestModal = (asset) => {
+        setSelectedAsset(asset);
+        setNote('');
+        window.my_modal_5.showModal();
+    };
+
+    const handleRequestSubmit = async () => {
+        setRequesting(true);
         try {
-            await API.post('/requests', { assetId });
+            await API.post('/requests', {
+                assetId: selectedAsset._id,
+                note: note
+            });
             alert('✅ Asset requested successfully!');
+            window.my_modal_5.close();
             loadAssets();
         } catch (e) {
             alert(e.response?.data?.msg || 'Error requesting asset');
+        } finally {
+            setRequesting(false);
         }
     };
 
@@ -62,42 +80,71 @@ export default function RequestAsset() {
                 {filteredAssets.map(a => (
                     <div
                         key={a._id}
-                        className={`card bg-base-100 shadow-xl transition-all hover:-translate-y-1 ${a.availableQuantity < 1 ? 'opacity-75' : ''}`}
+                        className={`card bg-base-100 shadow-xl transition-all hover:-translate-y-1 ${a.availableQuantity < 1 ? 'opacity-75 grayscale' : ''}`}
                     >
-                        <figure className="px-6 pt-6">
-                            <div className="w-full h-32 bg-base-200 rounded-lg flex items-center justify-center text-5xl">
-                                {a.productType === 'Returnable' ? '💼' : '🎁'}
-                            </div>
+                        <figure className="px-6 pt-6 relative">
+                            {a.productImage ? (
+                                <img src={a.productImage} alt={a.productName} className="h-48 w-full object-cover rounded-xl" />
+                            ) : (
+                                <div className="w-full h-48 bg-base-200 rounded-xl flex items-center justify-center text-5xl">
+                                    {a.productType === 'Returnable' ? '💼' : '🎁'}
+                                </div>
+                            )}
+                            {a.availableQuantity < 1 && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-xl">
+                                    <span className="badge badge-error badge-lg font-bold">OUT OF STOCK</span>
+                                </div>
+                            )}
                         </figure>
                         <div className="card-body">
-                            <h3 className="card-title justify-between">
-                                {a.productName}
+                            <div className="flex justify-between items-start">
+                                <h3 className="card-title text-lg">{a.productName}</h3>
                                 <div className={`badge ${a.productType === 'Returnable' ? 'badge-primary' : 'badge-secondary'} badge-sm`}>
                                     {a.productType}
                                 </div>
-                            </h3>
-
-                            <div className="flex items-center gap-2 mt-2">
-                                <div className={`badge ${a.availableQuantity > 0 ? 'badge-success' : 'badge-error'} gap-2`}>
-                                    {a.availableQuantity > 0 ? '✅' : '❌'}
-                                    {a.availableQuantity} available
-                                </div>
                             </div>
 
-                            <div className="card-actions justify-end mt-4">
+                            <div className="text-sm text-gray-500 mb-4">
+                                Available: <span className={a.availableQuantity > 0 ? 'text-success font-bold' : 'text-error'}>{a.availableQuantity}</span>
+                            </div>
+
+                            <div className="card-actions justify-end mt-auto">
                                 <button
                                     className="btn btn-primary btn-block"
-                                    onClick={() => requestAsset(a._id, a.productName)}
+                                    onClick={() => openRequestModal(a)}
                                     disabled={a.availableQuantity < 1}
                                 >
-                                    {a.availableQuantity > 0 ? 'Request' : 'Out of Stock'}
+                                    Request Item
                                 </button>
                             </div>
                         </div>
                     </div>
                 ))}
-                {filteredAssets.length === 0 && <p className="col-span-full text-center py-10">No assets found</p>}
+                {filteredAssets.length === 0 && <p className="col-span-full text-center py-10 text-gray-400">No assets found matching your search.</p>}
             </div>
+
+            {/* Request Modal */}
+            <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+                <form method="dialog" className="modal-box p-6">
+                    <h3 className="font-bold text-lg mb-4">Request {selectedAsset?.productName}</h3>
+                    <p className="py-2 text-sm text-gray-500 mb-4">Add a note for your HR manager (optional):</p>
+
+                    <textarea
+                        className="textarea textarea-bordered w-full h-24"
+                        placeholder="e.g. Need this for the upcoming project..."
+                        value={note}
+                        onChange={e => setNote(e.target.value)}
+                    ></textarea>
+
+                    <div className="modal-action">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="btn" type="button" onClick={() => window.my_modal_5.close()}>Cancel</button>
+                        <button className="btn btn-primary" type="button" onClick={handleRequestSubmit} disabled={requesting}>
+                            {requesting ? <span className="loading loading-spinner"></span> : 'Submit Request'}
+                        </button>
+                    </div>
+                </form>
+            </dialog>
         </div>
     )
 }
