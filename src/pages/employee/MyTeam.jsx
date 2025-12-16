@@ -59,7 +59,7 @@ export default function MyTeam() {
     if (loading && affiliations.length === 0) return <div className="text-center mt-20"><span className="loading loading-spinner"></span></div>;
 
     return (
-        <div>
+        <div className="container mx-auto p-4 md:p-6 lg:p-8">
             {/* Header with Company Selector */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <h2 className="text-3xl font-bold flex items-center gap-3">

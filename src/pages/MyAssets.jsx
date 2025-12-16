@@ -42,7 +42,7 @@ export default function MyAssets() {
   if (loading) return <div className="text-center mt-10"><span className="loading loading-spinner"></span></div>;
 
   return (
-    <div>
+    <div className="container mx-auto p-4 md:p-6 lg:p-8">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <div>
           <h2 className="text-3xl font-bold flex items-center gap-2">

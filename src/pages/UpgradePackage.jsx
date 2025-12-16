@@ -41,7 +41,7 @@ export default function UpgradePackage() {
   };
 
   return (
-    <div>
+    <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-6xl">
       <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
         <span>⚡</span> Upgrade Package
       </h2>
