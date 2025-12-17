@@ -25,6 +25,7 @@ export default function AllRequests() {
                                     <th>Employee</th>
                                     <th>Asset</th>
                                     <th>Type</th>
+                                    <th>Note</th>
                                     <th>Date</th>
                                     <th>Status</th>
                                     <th>Actions</th>
@@ -39,6 +40,7 @@ export default function AllRequests() {
                                         </td>
                                         <td>{r.assetName}</td>
                                         <td>{r.assetType}</td>
+                                        <td className="max-w-xs truncate text-xs text-gray-500" title={r.note}>{r.note || '-'}</td>
                                         <td>{new Date(r.requestDate).toLocaleDateString()}</td>
                                         <td>
                                             <div className={`badge ${r.requestStatus === 'pending' ? 'badge-warning' : r.requestStatus === 'approved' ? 'badge-success' : 'badge-error'}`}>
@@ -55,7 +57,7 @@ export default function AllRequests() {
                                         </td>
                                     </tr>
                                 ))}
-                                {requests.length === 0 && <tr><td colSpan="6" className="text-center">No requests found</td></tr>}
+                                {requests.length === 0 && <tr><td colSpan="7" className="text-center">No requests found</td></tr>}
                             </tbody>
                         </table>
                     </div>
