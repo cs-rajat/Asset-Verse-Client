@@ -39,12 +39,99 @@ export default function MyEmployeeList() {
         }
     }
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [availableAssets, setAvailableAssets] = useState([]);
+    const [selectedAssetId, setSelectedAssetId] = useState('');
+    const [assignNote, setAssignNote] = useState('');
+
+    const openAssignModal = async (employee) => {
+        setSelectedEmployee(employee);
+        try {
+            const { data } = await API.get('/assets'); // Fetch assets
+            // Filter only available assets
+            setAvailableAssets(data.assets.filter(a => a.availableQuantity > 0));
+            setIsModalOpen(true);
+        } catch (e) {
+            console.error(e);
+            alert("Failed to load assets");
+        }
+    };
+
+    const handleAssign = async (e) => {
+        e.preventDefault();
+        if (!selectedAssetId) return alert("Please select an asset");
+
+        console.log("Assigning:", {
+            email: selectedEmployee.employeeEmail || selectedEmployee.email,
+            asset: selectedAssetId,
+            note: assignNote
+        });
+
+        try {
+            await API.post('/assigned', {
+                employeeEmail: selectedEmployee.employeeEmail || selectedEmployee.email,
+                assetId: selectedAssetId,
+                notes: assignNote
+            });
+            alert("Asset assigned successfully!");
+            setIsModalOpen(false);
+            setAssignNote('');
+            setSelectedAssetId('');
+            loadData(); // Refresh counts
+        } catch (err) {
+            console.error("Assignment Error:", err);
+            const serverMsg = err.response?.data?.msg || err.response?.data?.message;
+            alert(serverMsg || ("Assignment failed: " + err.message + "\nFull Error: " + JSON.stringify(err.response?.data)));
+        }
+    };
+
     if (loading) return <div className="text-center mt-20"><span className="loading loading-spinner"></span></div>;
 
     const usagePercentage = Math.min((hrStats.current / hrStats.limit) * 100, 100);
 
     return (
         <div>
+            {/* Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                    <div className="modal-box w-full max-w-md bg-white p-6 rounded-2xl shadow-2xl">
+                        <h3 className="font-bold text-lg mb-4">Assign Asset to {selectedEmployee?.name}</h3>
+                        <form onSubmit={handleAssign}>
+                            <div className="form-control mb-4">
+                                <label className="label font-semibold">Select Asset</label>
+                                <select
+                                    className="select select-bordered w-full"
+                                    value={selectedAssetId}
+                                    onChange={e => setSelectedAssetId(e.target.value)}
+                                    required
+                                >
+                                    <option value="">-- Choose available asset --</option>
+                                    {availableAssets.map(asset => (
+                                        <option key={asset._id} value={asset._id}>
+                                            {asset.productName} ({asset.productType}) - {asset.availableQuantity} left
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="form-control mb-6">
+                                <label className="label font-semibold">Note (Optional)</label>
+                                <textarea
+                                    className="textarea textarea-bordered h-24"
+                                    placeholder="Reason for assignment..."
+                                    value={assignNote}
+                                    onChange={e => setAssignNote(e.target.value)}
+                                ></textarea>
+                            </div>
+                            <div className="modal-action">
+                                <button type="button" className="btn btn-ghost" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="btn btn-primary">Assign</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <div>
                     <h2 className="text-3xl font-bold flex items-center gap-3">
@@ -100,8 +187,11 @@ export default function MyEmployeeList() {
                                 </div>
                             </div>
 
-                            <div className="card-actions mt-6 w-full">
-                                <button className="btn btn-error btn-outline btn-sm w-full" onClick={() => removeEmployee(emp._id)}>
+                            <div className="card-actions mt-6 w-full flex flex-col gap-2">
+                                <button className="btn btn-primary btn-sm w-full" onClick={() => openAssignModal(emp)}>
+                                    Assign Asset
+                                </button>
+                                <button className="btn btn-error btn-outline btn-xs w-full" onClick={() => removeEmployee(emp._id)}>
                                     Remove from Team
                                 </button>
                             </div>
