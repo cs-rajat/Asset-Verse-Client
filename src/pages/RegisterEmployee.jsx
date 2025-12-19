@@ -6,10 +6,33 @@ import { useNavigate, Link } from 'react-router-dom';
 export default function RegisterEmployee() {
   const [form, setForm] = useState({ name: '', email: '', password: '', dateOfBirth: '' });
   const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
   const nav = useNavigate();
+
+  const validatePassword = (password) => {
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters long';
+    }
+    if (!/[A-Z]/.test(password)) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!/[a-z]/.test(password)) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    return '';
+  };
 
   const submit = async (e) => {
     e.preventDefault();
+    
+    // Validate password
+    const error = validatePassword(form.password);
+    if (error) {
+      setPasswordError(error);
+      return;
+    }
+    
+    setPasswordError('');
     try {
       // 3. Create User via Backend Auth API (handles both MongoDB and JWT)
       const { data } = await API.post('/auth/register/employee', form);
@@ -52,7 +75,26 @@ export default function RegisterEmployee() {
 
             <div className="form-control">
               <label className="label"><span className="label-text font-semibold">Password</span></label>
-              <input type="password" className="input input-bordered bg-base-50 focus:bg-white transition-all" placeholder="Min 6 characters" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required minLength="6" />
+              <input 
+                type="password" 
+                className="input input-bordered bg-base-50 focus:bg-white transition-all" 
+                placeholder="Min 6 chars, 1 uppercase, 1 lowercase" 
+                value={form.password} 
+                onChange={(e) => {
+                  setForm({ ...form, password: e.target.value });
+                  setPasswordError('');
+                }} 
+                required 
+                minLength="6" 
+              />
+              {passwordError && (
+                <label className="label">
+                  <span className="label-text-alt text-error">{passwordError}</span>
+                </label>
+              )}
+              <label className="label">
+                <span className="label-text-alt text-gray-500">Must contain: 6+ characters, 1 uppercase, 1 lowercase</span>
+              </label>
             </div>
 
             <div className="form-control">
