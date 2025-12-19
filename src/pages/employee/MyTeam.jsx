@@ -133,6 +133,7 @@ export default function MyTeam() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-lg">{member.employeeName}</h3>
+                                <p className="text-xs text-gray-500">{member.employeeEmail || member.email}</p>
                                 <div className="badge badge-ghost mt-1">{member.role === 'hr' ? 'HR Manager' : 'Team Member'}</div>
                             </div>
                         </div>

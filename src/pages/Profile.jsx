@@ -93,15 +93,40 @@ export default function Profile() {
                                 <label className="label"><span className="label-text">Full Name</span></label>
                                 <input className="input input-bordered" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
                             </div>
+
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Profile Image URL</span></label>
-                                <input className="input input-bordered" value={form.profileImage} onChange={e => setForm({ ...form, profileImage: e.target.value })} />
+                                <label className="label"><span className="label-text">Profile Image</span></label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="file"
+                                        className="file-input file-input-bordered w-full"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            const file = e.target.files[0];
+                                            if (!file) return;
+                                            setLoading(true);
+                                            try {
+                                                const { uploadImageToImgBB } = await import('../utils/imageUpload');
+                                                const url = await uploadImageToImgBB(file);
+                                                setForm({ ...form, profileImage: url });
+                                            } catch (err) {
+                                                alert('Image upload failed');
+                                            } finally {
+                                                setLoading(false);
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                {form.profileImage && <div className="text-xs text-success mt-1">Image uploaded!</div>}
                             </div>
+
                             <div className="form-control">
                                 <label className="label"><span className="label-text">Date of Birth</span></label>
                                 <input type="date" className="input input-bordered" value={form.dateOfBirth} onChange={e => setForm({ ...form, dateOfBirth: e.target.value })} />
                             </div>
-                            <button className="btn btn-primary w-full">Save Changes</button>
+                            <button className="btn btn-primary w-full" disabled={loading}>
+                                {loading ? 'Uploading...' : 'Save Changes'}
+                            </button>
                         </form>
                     ) : (
                         <div className="space-y-4">
@@ -138,6 +163,6 @@ export default function Profile() {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
