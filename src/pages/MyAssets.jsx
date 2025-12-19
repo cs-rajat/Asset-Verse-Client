@@ -56,7 +56,14 @@ export default function MyAssets() {
         </button>
       </div>
 
-      <div className="card bg-base-100 shadow-xl border border-base-200 mb-6">
+      {/* Print Header */}
+      <div className="print-header">
+        <h1 className="text-4xl font-bold mb-2">💎 AssetVerse</h1>
+        <p className="opacity-60">Employee Asset Report</p>
+        <div className="divider"></div>
+      </div>
+
+      <div className="card bg-base-100 shadow-xl border border-base-200 mb-6 no-print">
         <div className="card-body p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <input
