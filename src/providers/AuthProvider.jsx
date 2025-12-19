@@ -59,11 +59,17 @@ const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const updateUser = (name, photo) => {
+        setUser(prev => ({ ...prev, name: name || prev.name, profileImage: photo || prev.profileImage }));
+        return Promise.resolve();
+    };
+
     const authInfo = {
         user,
         loading,
         login,
-        logout
+        logout,
+        updateUser
     }
 
     return (

@@ -20,6 +20,8 @@ import MyEmployeeList from './pages/hr/MyEmployeeList';
 import EditAsset from './pages/hr/EditAsset';
 import RequestAsset from './pages/employee/RequestAsset';
 import MyTeam from './pages/employee/MyTeam';
+import NoticesHR from './pages/hr/NoticesHR';
+import NoticesEmployee from './pages/employee/NoticesEmployee';
 import Profile from './pages/Profile';
 import PaymentSuccess from './pages/PaymentSuccess';
 
@@ -46,10 +48,12 @@ function App() {
             <Route path="assets/:id/edit" element={<EditAsset />} />
             <Route path="requests" element={<AllRequests />} />
             <Route path="employees" element={<MyEmployeeList />} />
+            <Route path="notices" element={<NoticesHR />} />
           </Route>
           <Route path="/dashboard/employee" element={<PrivateRoute><DashboardEmployee /></PrivateRoute>}>
             <Route index element={<RequestAsset />} />
             <Route path="request" element={<RequestAsset />} />
+            <Route path="notices" element={<NoticesEmployee />} />
           </Route>
           <Route path="/my-assets" element={<PrivateRoute><MyAssets /></PrivateRoute>} />
           <Route path="/my-team" element={<PrivateRoute><MyTeam /></PrivateRoute>} />

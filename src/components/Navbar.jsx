@@ -17,6 +17,7 @@ export default function Navbar() {
       <li><Link to="/dashboard/hr/add-asset">Add Asset</Link></li>
       <li><Link to="/dashboard/hr/requests">All Requests</Link></li>
       <li><Link to="/dashboard/hr/employees">My Employee List</Link></li>
+      <li><Link to="/dashboard/hr/notices">Notices</Link></li>
       <li><Link to="/profile">Profile</Link></li>
       <li><Link to="/analytics">Analytics</Link></li>
       <li><Link to="/upgrade">Upgrade Package</Link></li>
@@ -28,6 +29,7 @@ export default function Navbar() {
       <li><Link to="/my-assets">My Assets</Link></li>
       <li><Link to="/my-team">My Team</Link></li>
       <li><Link to="/dashboard/employee/request">Request Asset</Link></li>
+      <li><Link to="/dashboard/employee/notices">Notice Board</Link></li>
       <li><Link to="/profile">Profile</Link></li>
     </>
   );
@@ -74,7 +76,7 @@ export default function Navbar() {
             <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn btn-ghost btn-circle avatar ring ring-primary ring-offset-base-100 ring-offset-2 transition-transform hover:scale-110">
                 <div className="w-10 rounded-full">
-                  <img src={user?.companyLogo || "https://i.ibb.co/T0h284p/user-placeholder.png"} alt="profile" />
+                  <img src={user?.profileImage || user?.companyLogo || `https://ui-avatars.com/api/?name=${user?.name}&background=4F46E5&color=fff`} alt="profile" />
                 </div>
               </label>
               <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 rounded-box w-60 border border-base-200/50">

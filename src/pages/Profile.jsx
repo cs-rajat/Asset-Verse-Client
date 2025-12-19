@@ -3,7 +3,7 @@ import { AuthContext } from '../providers/AuthProvider';
 import API from '../api/api';
 
 export default function Profile() {
-    const { user, updateUserProfile } = useContext(AuthContext);
+    const { user, updateUser } = useContext(AuthContext);
     const [dbUser, setDbUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
@@ -42,8 +42,8 @@ export default function Profile() {
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            // Update Firebase Profile
-            await updateUserProfile(form.name, form.profileImage);
+            // Update Context State
+            await updateUser(form.name, form.profileImage);
 
             // Update Backend Profile
             await API.patch('/users/me', form);
@@ -120,6 +120,34 @@ export default function Profile() {
                                 {form.profileImage && <div className="text-xs text-success mt-1">Image uploaded!</div>}
                             </div>
 
+                            {dbUser?.role === 'hr' && (
+                                <div className="form-control">
+                                    <div className="label"><span className="label-text">Company Logo</span></div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="file"
+                                            className="file-input file-input-bordered w-full"
+                                            accept="image/*"
+                                            onChange={async (e) => {
+                                                const file = e.target.files[0];
+                                                if (!file) return;
+                                                setLoading(true);
+                                                try {
+                                                    const { uploadImageToImgBB } = await import('../utils/imageUpload');
+                                                    const url = await uploadImageToImgBB(file);
+                                                    setForm({ ...form, companyLogo: url });
+                                                } catch (err) {
+                                                    alert('Logo upload failed');
+                                                } finally {
+                                                    setLoading(false);
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                    {form.companyLogo && <div className="text-xs text-success mt-1">Logo uploaded!</div>}
+                                </div>
+                            )}
+
                             <div className="form-control">
                                 <label className="label"><span className="label-text">Date of Birth</span></label>
                                 <input type="date" className="input input-bordered" value={form.dateOfBirth} onChange={e => setForm({ ...form, dateOfBirth: e.target.value })} />
@@ -130,6 +158,11 @@ export default function Profile() {
                         </form>
                     ) : (
                         <div className="space-y-4">
+                            {dbUser?.companyLogo && (
+                                <div className="flex justify-center mb-4">
+                                    <img src={dbUser.companyLogo} alt="Company Logo" className="h-16 object-contain" />
+                                </div>
+                            )}
                             <div className="flex justify-between border-b pb-2">
                                 <span className="font-semibold">Full Name</span>
                                 <span>{dbUser?.name || 'N/A'}</span>
