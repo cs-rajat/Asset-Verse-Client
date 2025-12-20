@@ -6,12 +6,17 @@ import { AuthContext } from '../providers/AuthProvider';
 export default function PaymentSuccess() {
     const [params] = useSearchParams();
     const nav = useNavigate();
-    const { user } = useContext(AuthContext);
+    const { user, refreshUser } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
     const [success, setSuccess] = useState(false);
 
+    const called = React.useRef(false);
+
     useEffect(() => {
         const confirmPayment = async () => {
+            if (called.current) return;
+            called.current = true;
+
             try {
                 const sessionId = params.get('session_id');
                 const pkg = params.get('package');
@@ -23,15 +28,16 @@ export default function PaymentSuccess() {
                 }
 
                 // Call backend to record payment
-                // Note: In production, backend should verify session with Stripe using session_id.
-                // Here we trust the callback params for simplicity as per implementation plan/context (mocked/simple).
-                // But wait, stripeRoutes.js expects { packageName, employeeLimit, transactionId }
-
-                await API.post('/stripe/payment-success', {
+                const response = await API.post('/stripe/payment-success', {
                     transactionId: sessionId,
                     packageName: pkg,
                     employeeLimit: limit
                 });
+
+                console.log('Payment recorded:', response.data);
+
+                // Refresh user data to get updated packageLimit
+                await refreshUser();
 
                 setSuccess(true);
                 setLoading(false);
@@ -42,7 +48,7 @@ export default function PaymentSuccess() {
         };
 
         if (user) confirmPayment();
-    }, [user, params]);
+    }, [user, params, refreshUser]);
 
     return (
         <div className="min-h-[60vh] flex items-center justify-center text-center">

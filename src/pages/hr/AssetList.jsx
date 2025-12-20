@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import API from '../../api/api';
 import HRStats from './HRStats';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../providers/AuthProvider';
 
 export default function AssetList() {
     const [assets, setAssets] = useState([]);
@@ -11,6 +12,7 @@ export default function AssetList() {
     const [filterType, setFilterType] = useState('');
     const [filterStock, setFilterStock] = useState(''); // New stock filter
     const [sortConfig, setSortConfig] = useState(null); // Sorting
+    const { user } = useContext(AuthContext);
 
     const loadData = async () => {
         try {
@@ -75,6 +77,8 @@ export default function AssetList() {
                 totalQuantity={totalQuantity}
                 availableQuantity={availableQuantity}
                 pendingRequests={pendingRequests}
+                packageLimit={user?.packageLimit}
+                currentEmployees={user?.currentEmployees}
             />
 
             <div className="card bg-base-100 shadow-xl border border-base-200">

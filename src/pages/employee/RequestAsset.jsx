@@ -31,7 +31,8 @@ export default function RequestAsset() {
             window.my_modal_5.close();
             loadAssets();
         } catch (e) {
-            alert(e.response?.data?.msg || 'Error requesting asset');
+            console.error(e);
+            alert(e.response?.data?.msg || e.response?.data?.message || e.message || 'Error requesting asset');
         } finally {
             setRequesting(false);
         }

@@ -36,8 +36,9 @@ export default function Navbar() {
 
   return (
     <nav className="navbar bg-base-100/70 backdrop-blur-lg shadow-sm sticky top-0 z-50 border-b border-primary/10 transition-all duration-300">
-      <div className="container mx-auto">
-        <div className="navbar-start">
+      <div className="w-full px-4 flex items-center">
+        {/* Left Side: Logo & Mobile Menu */}
+        <div className="flex-1 flex items-center justify-start">
           <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost lg:hidden">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
@@ -57,7 +58,8 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="navbar-center hidden lg:flex">
+        {/* Center: Desktop Menu */}
+        <div className="hidden lg:flex flex-none">
           <ul className="menu menu-horizontal px-1">
             <li><Link to="/" className="font-medium hover:text-primary transition-colors">Home</Link></li>
             {!user && (
@@ -69,7 +71,8 @@ export default function Navbar() {
           </ul>
         </div>
 
-        <div className="navbar-end gap-2">
+        {/* Right Side: Auth & Avatar (Pushed to Edge) */}
+        <div className="flex-1 flex items-center justify-end gap-2">
           {!user ? (
             <Link to="/login" className="btn btn-primary btn-sm rounded-full px-6">Login</Link>
           ) : (

@@ -64,12 +64,28 @@ const AuthProvider = ({ children }) => {
         return Promise.resolve();
     };
 
+    const refreshUser = async () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/me`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setUser(res.data);
+                return res.data;
+            } catch (err) {
+                console.error('Failed to refresh user:', err);
+            }
+        }
+    };
+
     const authInfo = {
         user,
         loading,
         login,
         logout,
-        updateUser
+        updateUser,
+        refreshUser
     }
 
     return (

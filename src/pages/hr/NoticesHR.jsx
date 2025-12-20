@@ -5,6 +5,7 @@ export default function NoticesHR() {
     const [notices, setNotices] = useState([]);
     const [form, setForm] = useState({ title: '', description: '', priority: 'low' });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => { loadNotices(); }, []);
 
@@ -24,7 +25,10 @@ export default function NoticesHR() {
             setForm({ title: '', description: '', priority: 'low' });
             loadNotices();
         } catch (e) {
-            alert('Failed to create notice');
+            console.error("Notice Error:", e);
+            const errorMsg = e.response?.data?.msg || e.response?.data?.message || e.message || 'Unknown Error';
+            setError(errorMsg);
+            alert(`Error: ${errorMsg}`);
         } finally {
             setLoading(false);
         }
@@ -39,6 +43,12 @@ export default function NoticesHR() {
                 <div className="card bg-base-100 shadow-xl h-fit">
                     <div className="card-body">
                         <h3 className="card-title mb-4">Post New Announcement</h3>
+                        {error && (
+                            <div className="alert alert-error text-sm shadow-lg mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>{error}</span>
+                            </div>
+                        )}
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="form-control">
                                 <label className="label">Title</label>
