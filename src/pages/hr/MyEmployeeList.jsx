@@ -91,7 +91,7 @@ export default function MyEmployeeList() {
     const usagePercentage = Math.min((hrStats.current / hrStats.limit) * 100, 100);
 
     return (
-        <div>
+        <div className="container mx-auto p-2 sm:p-4">
             {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">

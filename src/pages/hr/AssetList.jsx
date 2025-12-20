@@ -119,60 +119,60 @@ export default function AssetList() {
                         </Link>
                     </div>
 
-                    <div className="overflow-x-auto rounded-lg border border-base-200">
+                    <div className="overflow-x-auto rounded-lg border border-base-200 -mx-2 sm:mx-0">
                         <table className="table table-zebra w-full">
                             <thead className="bg-base-200/50 text-base-content/70">
                                 <tr>
-                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('productName')}>Asset Name ↕</th>
-                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('productType')}>Type ↕</th>
-                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('productQuantity')}>Total Qty ↕</th>
-                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('availableQuantity')}>Available ↕</th>
-                                    <th className="font-bold uppercase tracking-wider cursor-pointer hover:text-primary" onClick={() => requestSort('dateAdded')}>Date Added ↕</th>
+                                    <th className="font-bold text-xs sm:text-sm uppercase tracking-wider cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => requestSort('productName')}>Asset Name ↕</th>
+                                    <th className="font-bold text-xs sm:text-sm uppercase tracking-wider cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => requestSort('productType')}>Type ↕</th>
+                                    <th className="font-bold text-xs sm:text-sm uppercase tracking-wider cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => requestSort('productQuantity')}>Total Qty ↕</th>
+                                    <th className="font-bold text-xs sm:text-sm uppercase tracking-wider cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => requestSort('availableQuantity')}>Available ↕</th>
+                                    <th className="font-bold text-xs sm:text-sm uppercase tracking-wider cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => requestSort('dateAdded')}>Date Added ↕</th>
                                     <th className="font-bold uppercase tracking-wider text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredAssets.length > 0 ? filteredAssets.map(asset => (
                                     <tr key={asset._id} className="hover:bg-base-50 transition-colors">
-                                        <td>
-                                            <div className="flex items-center gap-4">
-                                                <div className="avatar">
-                                                    <div className="mask mask-squircle w-12 h-12 bg-base-200 ring-2 ring-base-300 ring-offset-2">
+                                        <td className="min-w-[200px]">
+                                            <div className="flex items-center gap-3">
+                                                <div className="avatar flex-shrink-0">
+                                                    <div className="mask mask-squircle w-10 h-10 sm:w-12 sm:h-12 bg-base-200">
                                                         <img src={asset.productImage || "https://placehold.co/100"} alt="Asset" />
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <div className="font-bold text-lg">{asset.productName}</div>
+                                                <div className="min-w-0">
+                                                    <div className="font-bold text-sm sm:text-base truncate">{asset.productName}</div>
                                                     <div className="text-xs text-base-content/50">ID: {asset._id.slice(-6)}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            <span className={`badge badge-md font-medium border-0 ${asset.productType === 'Returnable' ? 'badge-primary bg-primary/10 text-primary' : 'badge-secondary bg-secondary/10 text-secondary'}`}>
+                                        <td className="min-w-[120px]">
+                                            <span className={`badge badge-sm sm:badge-md font-medium border-0 whitespace-nowrap ${asset.productType === 'Returnable' ? 'badge-primary bg-primary/10 text-primary' : 'badge-secondary bg-secondary/10 text-secondary'}`}>
                                                 {asset.productType}
                                             </span>
                                         </td>
-                                        <td className="font-mono font-bold text-center">{asset.productQuantity}</td>
-                                        <td className="font-mono font-bold text-center">
+                                        <td className="font-mono font-bold text-center min-w-[80px]">{asset.productQuantity}</td>
+                                        <td className="font-mono font-bold text-center min-w-[80px]">
                                             <span className={asset.availableQuantity === 0 ? 'text-error' : 'text-success'}>
                                                 {asset.availableQuantity}
                                             </span>
                                         </td>
-                                        <td className="text-sm">{new Date(asset.dateAdded).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</td>
-                                        <td className="text-right">
-                                            <div className="flex gap-2 justify-end">
-                                                <Link to={`/dashboard/hr/assets/${asset._id}/edit`} className="btn btn-sm btn-ghost btn-square text-info hover:bg-info/10">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                        <td className="text-xs sm:text-sm min-w-[100px] whitespace-nowrap">{new Date(asset.dateAdded).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                                        <td className="text-right min-w-[120px]">
+                                            <div className="flex gap-1 sm:gap-2 justify-end">
+                                                <Link to={`/dashboard/hr/assets/${asset._id}/edit`} className="btn btn-xs sm:btn-sm btn-ghost btn-square text-info hover:bg-info/10">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                 </Link>
-                                                <button className="btn btn-sm btn-ghost btn-square text-error hover:bg-error/10" onClick={() => handleDelete(asset._id)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                <button className="btn btn-xs sm:btn-sm btn-ghost btn-square text-error hover:bg-error/10" onClick={() => handleDelete(asset._id)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                                 </button>
                                             </div>
                                         </td>
                                     </tr>
                                 )) : (
                                     <tr>
-                                        <td colSpan="6" className="text-center py-20 text-gray-400">
+                                        <td colSpan="6" className="text-center py-12 sm:py-20 text-gray-400">
                                             <div className="flex flex-col items-center">
                                                 <span className="text-6xl mb-4">🔍</span>
                                                 <span className="text-xl">No assets found</span>

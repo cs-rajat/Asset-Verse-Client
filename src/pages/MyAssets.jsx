@@ -87,14 +87,14 @@ export default function MyAssets() {
         </div>
       </dialog>
 
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
         <div>
-          <h2 className="text-3xl font-bold flex items-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
             📦 My Assigned Assets
           </h2>
-          <p className="text-sm opacity-60">Manage all assets assigned to you</p>
+          <p className="text-xs sm:text-sm opacity-60">Manage all assets assigned to you</p>
         </div>
-        <button className="btn btn-secondary btn-outline gap-2" onClick={handlePrint}>
+        <button className="btn btn-secondary btn-outline btn-sm sm:btn-md gap-2" onClick={handlePrint}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
           Print List (PDF)
         </button>
@@ -158,7 +158,7 @@ export default function MyAssets() {
               <thead className="bg-base-200">
                 <tr>
                   <th>Asset</th>
-                  <th>Type</th>
+                  <th className="hidden md:table-cell">Type</th>
                   <th>Company</th>
                   <th>Assigned Date</th>
                   <th>Status</th>
@@ -171,11 +171,17 @@ export default function MyAssets() {
                     <td>
                       <div className="flex items-center gap-3">
                         {it.assetImage ? <img src={it.assetImage} alt="" className="w-12 h-12 object-cover rounded-lg bg-base-200" /> : <div className="w-12 h-12 bg-base-300 rounded-lg flex items-center justify-center">📦</div>}
-                        <div className="font-bold">{it.assetName}</div>
+                        <div>
+                          <div className="font-bold">{it.assetName}</div>
+                          {/* Mobile Only: Type Badge under Title */}
+                          <div className="md:hidden mt-1 text-left">
+                            <span className={`badge ${it.assetType === 'Returnable' ? 'badge-primary' : 'badge-secondary'} badge-xs opacity-90 whitespace-nowrap h-auto py-0.5`}>{it.assetType}</span>
+                          </div>
+                        </div>
                       </div>
                     </td>
-                    <td>
-                      <span className={`badge ${it.assetType === 'Returnable' ? 'badge-primary' : 'badge-secondary'} badge-sm`}>{it.assetType}</span>
+                    <td className="hidden md:table-cell">
+                      <span className={`badge ${it.assetType === 'Returnable' ? 'badge-primary' : 'badge-secondary'} badge-sm whitespace-nowrap`}>{it.assetType}</span>
                     </td>
                     <td>{it.companyName}</td>
                     <td>{new Date(it.assignmentDate).toLocaleDateString()}</td>

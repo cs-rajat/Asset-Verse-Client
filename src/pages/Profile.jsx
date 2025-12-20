@@ -70,7 +70,7 @@ export default function Profile() {
     if (loading) return <div className="p-10 text-center"><span className="loading loading-spinner"></span></div>;
 
     return (
-        <div className="container mx-auto p-4 max-w-2xl">
+        <div className="container mx-auto p-2 sm:p-4 max-w-2xl">
             <div className="card bg-base-100 shadow-xl border border-base-200">
                 <div className="card-body">
                     <div className="flex justify-between items-center mb-6">

@@ -34,17 +34,17 @@ export default function AllRequests() {
     }
 
     return (
-        <div>
-            <h2 className="text-3xl font-bold mb-6">All Requests</h2>
+        <div className="container mx-auto p-2 sm:p-4">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">All Requests</h2>
 
-            <div className="tabs tabs-boxed mb-6">
-                <a className={`tab ${activeTab === 'assets' ? 'tab-active' : ''}`} onClick={() => setActiveTab('assets')}>Asset Requests</a>
-                <a className={`tab ${activeTab === 'returns' ? 'tab-active' : ''}`} onClick={() => setActiveTab('returns')}>Return Requests</a>
+            <div className="tabs tabs-boxed mb-4 sm:mb-6 w-full">
+                <a className={`tab flex-1 ${activeTab === 'assets' ? 'tab-active' : ''}`} onClick={() => setActiveTab('assets')}>Asset Requests</a>
+                <a className={`tab flex-1 ${activeTab === 'returns' ? 'tab-active' : ''}`} onClick={() => setActiveTab('returns')}>Return Requests</a>
             </div>
 
             <div className="card bg-base-100 shadow-xl">
-                <div className="card-body">
-                    <div className="overflow-x-auto">
+                <div className="card-body p-2 sm:p-4">
+                    <div className="overflow-x-auto -mx-2 sm:mx-0">
                         {activeTab === 'assets' ? (
                             <table className="table table-zebra">
                                 <thead>

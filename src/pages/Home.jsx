@@ -123,18 +123,18 @@ export default function Home() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-12">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-8 sm:pt-12">
               <div className="text-left">
-                <div className="text-4xl font-black text-primary mb-1">98%</div>
-                <div className="text-sm text-slate-500 font-medium">Asset Utilization</div>
+                <div className="text-3xl sm:text-4xl font-black text-primary mb-1">98%</div>
+                <div className="text-xs sm:text-sm text-slate-500 font-medium">Asset Utilization</div>
               </div>
               <div className="text-left">
-                <div className="text-4xl font-black text-secondary mb-1">2.5K+</div>
-                <div className="text-sm text-slate-500 font-medium">Assets Tracked</div>
+                <div className="text-3xl sm:text-4xl font-black text-secondary mb-1">2.5K+</div>
+                <div className="text-xs sm:text-sm text-slate-500 font-medium">Assets Tracked</div>
               </div>
               <div className="text-left">
-                <div className="text-4xl font-black text-accent mb-1">500+</div>
-                <div className="text-sm text-slate-500 font-medium">Companies</div>
+                <div className="text-3xl sm:text-4xl font-black text-accent mb-1">500+</div>
+                <div className="text-xs sm:text-sm text-slate-500 font-medium">Companies</div>
               </div>
             </div>
           </div>

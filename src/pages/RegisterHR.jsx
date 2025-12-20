@@ -67,7 +67,7 @@ export default function RegisterHR() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center relative overflow-hidden py-12">
+    <div className="min-h-[80vh] flex items-center justify-center relative overflow-hidden py-8 sm:py-12 px-4">
       {/* Ambient Backgorund Elements */}
       <div className="absolute top-[0%] right-[0%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-3xl opacity-30 animate-pulse"></div>
       <div className="absolute bottom-[0%] left-[0%] w-[500px] h-[500px] bg-accent/20 rounded-full blur-3xl opacity-30 animate-pulse delay-700"></div>

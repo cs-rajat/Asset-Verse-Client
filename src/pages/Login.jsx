@@ -35,7 +35,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-[80vh] flex items-center justify-center relative overflow-hidden px-4">
       {/* Ambient Backgorund Elements */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 animate-pulse delay-1000"></div>

@@ -41,13 +41,13 @@ export default function UpgradePackage() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-6xl">
-      <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
+    <div className="container mx-auto p-2 sm:p-4 lg:p-8 max-w-6xl">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
         <span>⚡</span> Upgrade Package
       </h2>
 
       {/* Packages Grid */}
-      <div className="grid md:grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
         {PACKAGES.map(p => (
           <div className="card bg-base-100 shadow-xl border border-base-200 hover:border-primary transition-all" key={p.id}>
             <div className="card-body items-center text-center">
