@@ -7,7 +7,7 @@ export default function Profile() {
     const [dbUser, setDbUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
-    const [form, setForm] = useState({ name: '', profileImage: '', dateOfBirth: '' });
+    const [form, setForm] = useState({ name: '', email: '', profileImage: '', dateOfBirth: '' });
     const [affiliation, setAffiliation] = useState(null);
 
     useEffect(() => {
@@ -32,6 +32,7 @@ export default function Profile() {
 
             setForm({
                 name: userData.name || user?.displayName || '',
+                email: userData.email || user?.email || '',
                 profileImage: userData.profileImage || user?.photoURL || '',
                 dateOfBirth: userData.dateOfBirth ? new Date(userData.dateOfBirth).toISOString().split('T')[0] : ''
             });
@@ -42,17 +43,27 @@ export default function Profile() {
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            // Update Context State
-            await updateUser(form.name, form.profileImage);
+            // 1. Update Backend Profile FIRST
+            const response = await API.patch('/users/me', form);
 
-            // Update Backend Profile
-            await API.patch('/users/me', form);
+            // 2. If email changed, user needs to re-login
+            if (response.data.newEmail) {
+                alert('Email updated successfully! Please login again with your new email.');
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+                return;
+            }
+
+            // 3. Update Context State
+            // This updates the global user object, which triggers the useEffect below to reload the profile.
+            // Since backend is already updated, loadProfile will fetch the new data.
+            await updateUser(form.name, form.profileImage);
 
             alert('Profile updated successfully!');
             setEditing(false);
-            loadProfile();
         } catch (err) {
-            alert(err.response?.data?.msg || 'Update failed');
+            console.error("Update failed:", err);
+            alert(err.response?.data?.msg || err.message || 'Update failed');
         }
     };
 
@@ -92,6 +103,12 @@ export default function Profile() {
                             <div className="form-control">
                                 <label className="label"><span className="label-text">Full Name</span></label>
                                 <input className="input input-bordered" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label"><span className="label-text">Email</span></label>
+                                <input type="email" className="input input-bordered" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+                                <label className="label"><span className="label-text-alt text-warning">⚠️ Changing email requires re-login</span></label>
                             </div>
 
                             <div className="form-control">

@@ -8,16 +8,19 @@ export default function MyAssets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-
-  const [modalOpen, setModalOpen] = useState(false);
   const [selectedAssetId, setSelectedAssetId] = useState(null);
   const [returnForm, setReturnForm] = useState({ condition: 'Safe', note: '' });
 
+  const [modalOpen, setModalOpen] = useState(false);
+  // We keep this ref because it is used in the JSX <div ref={componentRef}>
   const componentRef = useRef();
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    documentTitle: 'AssetVerse-Employee-Assets',
-  });
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  // Note: We are now using native print with global CSS hiding/showing elements.
+  // The 'componentRef' is no longer strictly needed for react-to-print but we keep the structure.
 
   useEffect(() => { fetchAssets(); }, []);
 
