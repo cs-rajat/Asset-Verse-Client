@@ -12,21 +12,25 @@ export default function AssetList() {
     const [filterType, setFilterType] = useState('');
     const [filterStock, setFilterStock] = useState(''); // New stock filter
     const [sortConfig, setSortConfig] = useState(null); // Sorting
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 1 });
     const { user } = useContext(AuthContext);
 
-    const loadData = async () => {
+    const loadData = async (page = 1, limit = 10) => {
         try {
             const [assetsRes, requestsRes] = await Promise.all([
-                API.get('/assets'),
+                API.get(`/assets?page=${page}&limit=${limit}`),
                 API.get('/requests/hr')
             ]);
             setAssets(assetsRes.data.assets || []);
-            setRequests(requestsRes.data || []);
+            setPagination(assetsRes.data.pagination || { page: 1, limit: 10, total: 0, pages: 1 });
+            // Handle both old format (array) and new format (object with requests property)
+            setRequests(requestsRes.data.requests || requestsRes.data || []);
             setLoading(false);
         } catch (err) { console.error(err); setLoading(false); }
     }
 
-    useEffect(() => { loadData(); }, []);
+    useEffect(() => { loadData(currentPage, 10); }, [currentPage]);
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure? This action cannot be undone.")) return;
@@ -184,6 +188,40 @@ export default function AssetList() {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Pagination Controls */}
+                    {pagination.pages > 1 && (
+                        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
+                            <div className="text-sm text-gray-600">
+                                Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} assets
+                            </div>
+                            <div className="join">
+                                <button 
+                                    className="join-item btn btn-sm" 
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                >
+                                    «
+                                </button>
+                                {[...Array(pagination.pages)].map((_, i) => (
+                                    <button 
+                                        key={i + 1}
+                                        className={`join-item btn btn-sm ${currentPage === i + 1 ? 'btn-active' : ''}`}
+                                        onClick={() => setCurrentPage(i + 1)}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
+                                <button 
+                                    className="join-item btn btn-sm" 
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.pages))}
+                                    disabled={currentPage === pagination.pages}
+                                >
+                                    »
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

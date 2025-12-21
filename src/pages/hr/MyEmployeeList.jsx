@@ -6,21 +6,37 @@ export default function MyEmployeeList() {
     const [employees, setEmployees] = useState([]);
     const [hrStats, setHrStats] = useState({ current: 0, limit: 0 });
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 1 });
 
-    useEffect(() => { loadData(); }, []);
+    useEffect(() => { loadData(currentPage); }, [currentPage]);
 
-    const loadData = async () => {
+    const loadData = async (page = 1) => {
         try {
-            // Parallel fetch: Employees List and HR Profile (for limits)
+            setLoading(true);
+            // Parallel fetch: Employees List (Paginated) and HR Profile (for limits)
             const [empRes, userRes] = await Promise.all([
-                API.get('/users/employees'),
+                API.get(`/users/employees?page=${page}&limit=10`),
                 API.get('/users/me')
             ]);
-            setEmployees(empRes.data);
-            setHrStats({
-                current: empRes.data.length, // More accurate from list length
-                limit: userRes.data.packageLimit || 5
-            });
+
+            // Handle paginated response structure
+            if (empRes.data.employees) {
+                setEmployees(empRes.data.employees);
+                setPagination(empRes.data.pagination);
+                setHrStats({
+                    current: empRes.data.pagination.total,
+                    limit: userRes.data.packageLimit || 5
+                });
+            } else {
+                // Fallback for non-paginated legacy response
+                setEmployees(empRes.data);
+                setHrStats({
+                    current: empRes.data.length,
+                    limit: userRes.data.packageLimit || 5
+                });
+            }
+
             setLoading(false);
         } catch (e) {
             console.error(e);
@@ -33,7 +49,7 @@ export default function MyEmployeeList() {
         try {
             await API.delete(`/users/affiliations/${id}`);
             alert('Employee removed successfully.');
-            loadData();
+            loadData(currentPage);
         } catch (err) {
             alert(err.response?.data?.msg || 'Failed to remove employee');
         }
@@ -78,7 +94,7 @@ export default function MyEmployeeList() {
             setIsModalOpen(false);
             setAssignNote('');
             setSelectedAssetId('');
-            loadData(); // Refresh counts
+            loadData(currentPage); // Refresh counts
         } catch (err) {
             console.error("Assignment Error:", err);
             const serverMsg = err.response?.data?.msg || err.response?.data?.message;
@@ -210,9 +226,46 @@ export default function MyEmployeeList() {
                 )}
             </div>
 
-            <div className="mt-8 text-right text-sm text-gray-400">
-                Total Employees: {employees.length}
-            </div>
+            {/* Pagination Controls */}
+            {pagination.pages > 1 && (
+                <div className="flex flex-col sm:flex-row justify-between items-center mt-8 gap-4">
+                    <div className="text-sm opacity-60">
+                        Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} employees
+                    </div>
+                    <div className="join">
+                        <button
+                            className="join-item btn btn-sm"
+                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                        >
+                            «
+                        </button>
+
+                        {/* Page Numbers */}
+                        {pagination.pages <= 5 ? (
+                            [...Array(pagination.pages)].map((_, i) => (
+                                <button
+                                    key={i + 1}
+                                    className={`join-item btn btn-sm ${currentPage === i + 1 ? 'btn-active' : ''}`}
+                                    onClick={() => setCurrentPage(i + 1)}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))
+                        ) : (
+                            <button className="join-item btn btn-sm text-xs">Page {currentPage} / {pagination.pages}</button>
+                        )}
+
+                        <button
+                            className="join-item btn btn-sm"
+                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.pages))}
+                            disabled={currentPage === pagination.pages}
+                        >
+                            »
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

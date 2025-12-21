@@ -5,18 +5,34 @@ export default function AllRequests() {
     const [requests, setRequests] = useState([]);
     const [returnRequests, setReturnRequests] = useState([]);
     const [activeTab, setActiveTab] = useState('assets'); // 'assets' or 'returns'
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 1 });
 
     useEffect(() => {
-        loadRequests();
+        loadRequests(currentPage);
         loadReturnRequests();
-    }, []);
+    }, [currentPage]);
 
-    const loadRequests = async () => {
-        try { const { data } = await API.get('/requests/hr'); setRequests(data); } catch (e) { console.error(e); }
+    const loadRequests = async (page = 1) => {
+        try { 
+            const { data } = await API.get(`/requests/hr?page=${page}&limit=10`); 
+            // Handle both old format (array) and new format (object with requests property)
+            setRequests(data.requests || data || []); 
+            setPagination(data.pagination || { page: 1, limit: 10, total: 0, pages: 1 });
+        } catch (e) { 
+            console.error(e); 
+            setRequests([]);
+        }
     }
 
     const loadReturnRequests = async () => {
-        try { const { data } = await API.get('/assigned/return-requests'); setReturnRequests(data); } catch (e) { console.error(e); }
+        try { 
+            const { data } = await API.get('/assigned/return-requests'); 
+            setReturnRequests(data || []); 
+        } catch (e) { 
+            console.error(e); 
+            setReturnRequests([]);
+        }
     }
 
     const approve = async id => { try { await API.patch(`/requests/approve/${id}`); alert('Approved'); loadRequests(); } catch (e) { alert(e.response?.data?.msg || 'Error'); } }
@@ -124,6 +140,40 @@ export default function AllRequests() {
                                     ))}
                                     {returnRequests.length === 0 && <tr><td colSpan="6" className="text-center">No return requests found</td></tr>}
                                 </tbody>
+
+                    {/* Pagination Controls - Only for Asset Requests */}
+                    {activeTab === 'assets' && pagination.pages > 1 && (
+                        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
+                            <div className="text-sm opacity-70">
+                                Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} requests
+                            </div>
+                            <div className="join">
+                                <button 
+                                    className="join-item btn btn-sm" 
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                >
+                                    «
+                                </button>
+                                {[...Array(pagination.pages)].map((_, i) => (
+                                    <button
+                                        key={i + 1}
+                                        className={`join-item btn btn-sm ${currentPage === i + 1 ? 'btn-active' : ''}`}
+                                        onClick={() => setCurrentPage(i + 1)}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
+                                <button 
+                                    className="join-item btn btn-sm" 
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.pages))}
+                                    disabled={currentPage === pagination.pages}
+                                >
+                                    »
+                                </button>
+                            </div>
+                        </div>
+                    )}
                             </table>
                         )}
                     </div>
