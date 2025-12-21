@@ -124,4 +124,4 @@ Open `http://localhost:5173` in your browser.
 ## 👨‍💻 Author
 
 **AssetVerse Team**  
-Corporate Asset Management Solution
+Rajat Mandal
