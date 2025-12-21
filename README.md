@@ -1,55 +1,127 @@
-# AssetVerse - Corporate Asset Management System
+# 🏢 AssetVerse - Client Application
 
-AssetVerse is a comprehensive Web Application designed for HR Managers to efficiently manage company assets and for Employees to request and track their assigned equipment.
+> **Corporate Asset Management System**  
+> A modern, responsive web application for managing company assets, developed with React, Vite, and TailwindCSS.
 
-## Live Site
-**URL**: [Add your Vercel/Netlify URL here]
+## 🌐 Live URL
 
-## Key Features
-- **HR Dashboard**: 
-  - Asset Inventory Management (CRUD, Image Upload via ImgBB).
-  - Employee Management (Team view, Remove affiliation).
-  - Request Approval Workflow.
-  - Subscription Package System (Stripe Integration).
-- **Employee Dashboard**:
-  - View Assigned Assets (Search, Filter).
-  - Request New Assets.
-  - My Team View (Birthdays, Colleagues).
-  - Profile Management.
-- **Home Page**:
-  - Dynamic Package Pricing.
-  - Professional Corporate UI with Framer Motion.
-- **Security**:
-  - JWT Authentication.
-  - Role-Based Access Control (HR vs Employee).
+**Deployed Site**: [https://asset-verse24.netlify.app](https://asset-verse24.netlify.app)
 
-## Tech Stack & Packages
-- **Frontend**: React, Vite, DaisyUI, TailwindCSS
-- **State/Auth**: Firebase Auth, Context API
-- **Visualization**: Recharts, Framer Motion
-- **Payment**: Stripe Elements (`@stripe/react-stripe-js`)
-- **HTTP**: Axios
+---
 
-## Setup Instructions
-1. Clone the repository.
-2. Run `npm install` to install dependencies.
-3. Create a `.env` file with the variables listed below.
-4. Run `npm run dev` to start the local development server.
+## ✨ Key Features
 
-## Environment Variables
-Create a `.env` file in the root directory:
+### **For HR Managers**
+- 📊 **Dashboard & Analytics**: Visual overview of asset distribution, return requests, and pending actions.
+- 📦 **Asset Management**: Add, update, and delete assets with image upload (ImgBB).
+- 👥 **Team Management**: View employee list, remove members, and assign assets directly.
+- 💳 **Subscription Management**: Upgrade packages via Stripe securely.
+- 📢 **Notice Board**: Post company-wide announcements.
+- 📝 **Request Handling**: Approve or reject asset requests from employees.
+
+### **For Employees**
+- 🛒 **Request Assets**: Browse available company assets and make requests.
+- 📂 **My Assets**: detailed list of assigned assets with filtering (Returned, Pending, Approved).
+- 📄 **PDF Reporting**: Print or download list of assigned assets.
+- 🔄 **Return Request**: Easy workflow to return assets with condition notes.
+- 👤 **Profile & Team**: View own profile and see team members/birthdays.
+
+---
+
+## 🛠️ Tech Stack & Packages
+
+| Category | Technology |
+|----------|------------|
+| **Framework** | React + Vite |
+| **Styling** | TailwindCSS + DaisyUI |
+| **Authentication** | Firebase Auth |
+| **State Management** | React Hooks (Context API optional) |
+| **Routing** | React Router DOM |
+| **Payment** | Stripe.js + React Stripe |
+| **Charts** | Recharts |
+| **Utilities** | Axios, React-to-Print, Framer Motion |
+
+### **📦 NPM Dependencies**
+```json
+{
+  "@stripe/react-stripe-js": "^5.4.1",
+  "@stripe/stripe-js": "^8.5.3",
+  "axios": "^1.4.0",
+  "daisyui": "^3.2.2",
+  "firebase": "^12.6.0",
+  "framer-motion": "^12.23.26",
+  "react": "^18.2.0",
+  "react-router-dom": "^6.14.1",
+  "react-to-print": "^3.2.0",
+  "recharts": "^2.5.0",
+  "tailwindcss": "^3.4.12"
+}
 ```
-VITE_API_URL=http://localhost:5001/api
-VITE_apiKey=YOUR_FIREBASE_API_KEY
-VITE_authDomain=YOUR_FIREBASE_AUTH_DOMAIN
-VITE_projectId=YOUR_FIREBASE_PROJECT_ID
-VITE_storageBucket=YOUR_FIREBASE_STORAGE_BUCKET
-VITE_messagingSenderId=YOUR_FIREBASE_SENDER_ID
-VITE_appId=YOUR_FIREBASE_APP_ID
-VITE_IMGBB_API_KEY=YOUR_IMGBB_API_KEY
-VITE_STRIPE_PUBLISHABLE_KEY=YOUR_STRIPE_PUBLIC_KEY
+
+---
+
+## 🚀 Setup Instructions
+
+### **1. Clone the Repository**
+```bash
+git clone https://github.com/cs-rajat/Asset-Verse-Client.git
+cd Asset-Verse-Client
 ```
 
-## Admin Test Credentials
-- **Email**: hr@testcompany.com
-- **Password**: (Please use the password provided in submission notes)
+### **2. Install Dependencies**
+```bash
+npm install
+```
+
+### **3. Configure Environment Variables**
+Create a `.env` file in the root directory and add the following keys:
+
+```env
+# Firebase Configuration (Get these from Firebase Console)
+VITE_apiKey=your_firebase_api_key
+VITE_authDomain=your_project.firebaseapp.com
+VITE_projectId=your_project_id
+VITE_storageBucket=your_project.firebasestorage.app
+VITE_messagingSenderId=your_sender_id
+VITE_appId=your_app_id
+
+# Backend API URL (Production URL for Vercel)
+VITE_API_URL=https://asset-verse-server-mu.vercel.app/api
+
+# Image Upload (ImgBB)
+VITE_IMGBB_API_KEY=your_imgbb_api_key
+
+# Payment (Stripe)
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_key
+```
+
+### **4. Run Locally**
+```bash
+npm run dev
+```
+Open `http://localhost:5173` in your browser.
+
+---
+
+## 🚢 Deployment (Netlify)
+
+1.  **Build the Project**:
+    ```bash
+    npm run build
+    ```
+    This creates a `dist` folder.
+
+2.  **Deploy**:
+    - **Option A (Git)**: Connect this repo to Netlify. Set Build Command: `npm run build`, Publish Directory: `dist`.
+    - **Option B (Manual)**: Drag and drop the `dist` folder into the Netlify "Sites" dashboard.
+
+3.  **Important**:
+    - Ensure all Environment Variables from `.env` are added to Netlify Site Settings.
+    - Ensure `_redirects` file exists in `public/` folder (Already included in repo) to prevent 404 errors on refresh.
+
+---
+
+## 👨‍💻 Author
+
+**AssetVerse Team**  
+Corporate Asset Management Solution
