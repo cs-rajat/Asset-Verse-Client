@@ -92,7 +92,7 @@ export default function Home() {
               </span>
             </div>
 
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black font-heading tracking-tight leading-[1.1] text-neutral">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black font-heading tracking-tight leading-[1.1] text-neutral">
               Asset<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-secondary animate-gradient bg-[length:200%_auto]">Management</span>
               <br />Reimagined.

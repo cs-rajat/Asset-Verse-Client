@@ -53,8 +53,8 @@ export default function Navbar() {
               )}
             </ul>
           </div>
-          <Link to="/" className="btn btn-ghost normal-case text-xl font-bold font-heading tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            <span className="text-3xl mr-1">💎</span> Asset<span className="text-primary">Verse</span>
+          <Link to="/" className="btn btn-ghost normal-case text-base sm:text-lg md:text-xl font-bold font-heading tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent px-1 sm:px-4">
+            <span className="text-xl sm:text-2xl md:text-3xl mr-1">💎</span> Asset<span className="text-primary">Verse</span>
           </Link>
         </div>
 
@@ -74,7 +74,7 @@ export default function Navbar() {
         {/* Right Side: Auth & Avatar (Pushed to Edge) */}
         <div className="flex-1 flex items-center justify-end gap-2">
           {!user ? (
-            <Link to="/login" className="btn btn-primary btn-sm rounded-full px-6">Login</Link>
+            <Link to="/login" className="btn btn-primary btn-sm rounded-full px-3 md:px-6">Login</Link>
           ) : (
             <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn btn-ghost btn-circle avatar ring ring-primary ring-offset-base-100 ring-offset-2 transition-transform hover:scale-110">
