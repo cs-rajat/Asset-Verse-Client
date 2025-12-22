@@ -35,8 +35,9 @@ export default function UpgradePackage() {
       console.log('Stripe Session URL:', data.url);
       window.location.href = data.url;
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.msg || 'Checkout failed');
+      console.error("Payment Error:", err);
+      const errorMessage = err.response?.data?.msg || err.message || 'Payment session creation failed';
+      alert(`Payment Failed: ${errorMessage}`);
     } finally { setLoading(false); }
   };
 
