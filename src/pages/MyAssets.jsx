@@ -10,7 +10,7 @@ export default function MyAssets() {
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedAssetId, setSelectedAssetId] = useState(null);
   const [returnForm, setReturnForm] = useState({ condition: 'Safe', note: '' });
-  
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 1 });
 
@@ -100,9 +100,9 @@ export default function MyAssets() {
               <span className="label-text font-semibold">Asset Condition</span>
               <span className="label-text-alt text-error">Required</span>
             </label>
-            <select 
-              className="select select-bordered" 
-              value={returnForm.condition} 
+            <select
+              className="select select-bordered"
+              value={returnForm.condition}
               onChange={e => setReturnForm({ ...returnForm, condition: e.target.value })}
             >
               <option value="Safe">✅ Safe / Good Condition</option>
@@ -116,10 +116,10 @@ export default function MyAssets() {
               <span className="label-text font-semibold">Additional Notes</span>
               <span className="label-text-alt opacity-60">{returnForm.note.length}/200</span>
             </label>
-            <textarea 
-              className="textarea textarea-bordered h-24" 
+            <textarea
+              className="textarea textarea-bordered h-24"
               placeholder="Describe any issues or additional information..."
-              value={returnForm.note} 
+              value={returnForm.note}
               onChange={e => setReturnForm({ ...returnForm, note: e.target.value.slice(0, 200) })}
               maxLength={200}
             ></textarea>
@@ -163,14 +163,14 @@ export default function MyAssets() {
           <div className="stat-value text-primary">{totalAssets}</div>
           <div className="stat-desc">From all companies</div>
         </div>
-        
+
         <div className="stat">
           <div className="stat-figure text-success text-3xl">✅</div>
           <div className="stat-title">Active</div>
           <div className="stat-value text-success">{assignedCount}</div>
           <div className="stat-desc">Currently assigned</div>
         </div>
-        
+
         <div className="stat">
           <div className="stat-figure text-info text-3xl">🔄</div>
           <div className="stat-title">Returnable</div>
@@ -249,7 +249,7 @@ export default function MyAssets() {
                   <th className="hidden md:table-cell">Request Date</th>
                   <th className="hidden md:table-cell">Approval Date</th>
                   <th>Status</th>
-                  <th className="no-print">Action</th>
+                  <th className="no-print text-right min-w-[120px]">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -275,29 +275,28 @@ export default function MyAssets() {
                     </td>
                     <td className="hidden md:table-cell">
                       <div className="text-xs opacity-70 flex items-center gap-1">
-                        📝 {it.requestDate ? new Date(it.requestDate).toLocaleDateString() : 
-                           it.assignmentDate ? new Date(it.assignmentDate).toLocaleDateString() : 'N/A'}
+                        📝 {it.requestDate ? new Date(it.requestDate).toLocaleDateString() :
+                          it.assignmentDate ? new Date(it.assignmentDate).toLocaleDateString() : 'N/A'}
                       </div>
                     </td>
                     <td className="hidden md:table-cell">
                       <div className="text-xs opacity-70 flex items-center gap-1">
-                        ✅ {it.approvalDate ? new Date(it.approvalDate).toLocaleDateString() : 
-                           it.assignmentDate ? new Date(it.assignmentDate).toLocaleDateString() : 'N/A'}
+                        ✅ {it.approvalDate ? new Date(it.approvalDate).toLocaleDateString() :
+                          it.assignmentDate ? new Date(it.assignmentDate).toLocaleDateString() : 'N/A'}
                       </div>
                     </td>
                     <td>
-                      <span className={`badge badge-sm ${
-                        it.status === 'assigned' ? 'badge-success' : 
-                        it.status === 'return_requested' ? 'badge-warning' : 
-                        it.status === 'returned' ? 'badge-ghost' :
-                        'badge-info'
-                      }`}>
-                        {it.status === 'return_requested' ? 'Return Pending' : 
-                         it.status === 'assigned' ? 'Assigned' :
-                         it.status === 'returned' ? 'Returned' : it.status}
+                      <span className={`badge badge-sm ${it.status === 'assigned' ? 'badge-success' :
+                        it.status === 'return_requested' ? 'badge-warning' :
+                          it.status === 'returned' ? 'badge-ghost' :
+                            'badge-info'
+                        }`}>
+                        {it.status === 'return_requested' ? 'Return Pending' :
+                          it.status === 'assigned' ? 'Assigned' :
+                            it.status === 'returned' ? 'Returned' : it.status}
                       </span>
                     </td>
-                    <td className="no-print">
+                    <td className="no-print text-right min-w-[120px]">
                       {it.assetType === 'Returnable' && it.status === 'assigned' && (
                         <button
                           className="btn btn-warning btn-xs gap-1"
@@ -327,8 +326,8 @@ export default function MyAssets() {
               Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} assets
             </div>
             <div className="join">
-              <button 
-                className="join-item btn btn-sm" 
+              <button
+                className="join-item btn btn-sm"
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
@@ -343,8 +342,8 @@ export default function MyAssets() {
                   {i + 1}
                 </button>
               ))}
-              <button 
-                className="join-item btn btn-sm" 
+              <button
+                className="join-item btn btn-sm"
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.pages))}
                 disabled={currentPage === pagination.pages}
               >

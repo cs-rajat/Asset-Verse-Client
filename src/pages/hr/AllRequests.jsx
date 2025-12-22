@@ -14,23 +14,23 @@ export default function AllRequests() {
     }, [currentPage]);
 
     const loadRequests = async (page = 1) => {
-        try { 
-            const { data } = await API.get(`/requests/hr?page=${page}&limit=10`); 
+        try {
+            const { data } = await API.get(`/requests/hr?page=${page}&limit=10`);
             // Handle both old format (array) and new format (object with requests property)
-            setRequests(data.requests || data || []); 
+            setRequests(data.requests || data || []);
             setPagination(data.pagination || { page: 1, limit: 10, total: 0, pages: 1 });
-        } catch (e) { 
-            console.error(e); 
+        } catch (e) {
+            console.error(e);
             setRequests([]);
         }
     }
 
     const loadReturnRequests = async () => {
-        try { 
-            const { data } = await API.get('/assigned/return-requests'); 
-            setReturnRequests(data || []); 
-        } catch (e) { 
-            console.error(e); 
+        try {
+            const { data } = await API.get('/assigned/return-requests');
+            setReturnRequests(data || []);
+        } catch (e) {
+            console.error(e);
             setReturnRequests([]);
         }
     }
@@ -71,7 +71,7 @@ export default function AllRequests() {
                                         <th>Note</th>
                                         <th>Date</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th className="min-w-[140px]">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -112,7 +112,7 @@ export default function AllRequests() {
                                         <th>Condition</th>
                                         <th>Note</th>
                                         <th>Date</th>
-                                        <th>Actions</th>
+                                        <th className="min-w-[140px]">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -141,39 +141,39 @@ export default function AllRequests() {
                                     {returnRequests.length === 0 && <tr><td colSpan="6" className="text-center">No return requests found</td></tr>}
                                 </tbody>
 
-                    {/* Pagination Controls - Only for Asset Requests */}
-                    {activeTab === 'assets' && pagination.pages > 1 && (
-                        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
-                            <div className="text-sm opacity-70">
-                                Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} requests
-                            </div>
-                            <div className="join">
-                                <button 
-                                    className="join-item btn btn-sm" 
-                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                                    disabled={currentPage === 1}
-                                >
-                                    «
-                                </button>
-                                {[...Array(pagination.pages)].map((_, i) => (
-                                    <button
-                                        key={i + 1}
-                                        className={`join-item btn btn-sm ${currentPage === i + 1 ? 'btn-active' : ''}`}
-                                        onClick={() => setCurrentPage(i + 1)}
-                                    >
-                                        {i + 1}
-                                    </button>
-                                ))}
-                                <button 
-                                    className="join-item btn btn-sm" 
-                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.pages))}
-                                    disabled={currentPage === pagination.pages}
-                                >
-                                    »
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                                {/* Pagination Controls - Only for Asset Requests */}
+                                {activeTab === 'assets' && pagination.pages > 1 && (
+                                    <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
+                                        <div className="text-sm opacity-70">
+                                            Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} requests
+                                        </div>
+                                        <div className="join">
+                                            <button
+                                                className="join-item btn btn-sm"
+                                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                                disabled={currentPage === 1}
+                                            >
+                                                «
+                                            </button>
+                                            {[...Array(pagination.pages)].map((_, i) => (
+                                                <button
+                                                    key={i + 1}
+                                                    className={`join-item btn btn-sm ${currentPage === i + 1 ? 'btn-active' : ''}`}
+                                                    onClick={() => setCurrentPage(i + 1)}
+                                                >
+                                                    {i + 1}
+                                                </button>
+                                            ))}
+                                            <button
+                                                className="join-item btn btn-sm"
+                                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.pages))}
+                                                disabled={currentPage === pagination.pages}
+                                            >
+                                                »
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </table>
                         )}
                     </div>

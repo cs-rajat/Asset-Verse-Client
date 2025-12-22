@@ -25,14 +25,19 @@ export default function RegisterEmployee() {
 
   const submit = async (e) => {
     e.preventDefault();
-    
+
     // Validate password
     const error = validatePassword(form.password);
     if (error) {
       setPasswordError(error);
       return;
     }
-    
+
+    if (!form.email.endsWith('@gmail.com')) {
+      alert('Only @gmail.com emails are allowed');
+      return;
+    }
+
     setPasswordError('');
     try {
       // 3. Create User via Backend Auth API (handles both MongoDB and JWT)
@@ -77,17 +82,17 @@ export default function RegisterEmployee() {
             <div className="form-control">
               <label className="label"><span className="label-text font-semibold">Password</span></label>
               <div className="relative">
-                <input 
+                <input
                   type={showPassword ? "text" : "password"}
-                  className="input input-bordered bg-base-50 focus:bg-white transition-all w-full pr-12" 
-                  placeholder="Min 6 chars, 1 uppercase, 1 lowercase" 
-                  value={form.password} 
+                  className="input input-bordered bg-base-50 focus:bg-white transition-all w-full pr-12"
+                  placeholder="Min 6 chars, 1 uppercase, 1 lowercase"
+                  value={form.password}
                   onChange={(e) => {
                     setForm({ ...form, password: e.target.value });
                     setPasswordError('');
-                  }} 
-                  required 
-                  minLength="6" 
+                  }}
+                  required
+                  minLength="6"
                 />
                 <button
                   type="button"
