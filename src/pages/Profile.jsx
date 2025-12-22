@@ -8,7 +8,7 @@ export default function Profile() {
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [form, setForm] = useState({ name: '', email: '', profileImage: '', dateOfBirth: '' });
-    const [affiliation, setAffiliation] = useState(null);
+    const [affiliations, setAffiliations] = useState([]);
 
     useEffect(() => {
         loadProfile();
@@ -25,9 +25,9 @@ export default function Profile() {
             const userData = userRes.data;
             setDbUser(userData);
 
-            // For employee showing connection
-            if (affiliationRes.data && affiliationRes.data.length > 0) {
-                setAffiliation(affiliationRes.data[0]);
+            // Store all affiliations
+            if (affiliationRes.data && Array.isArray(affiliationRes.data)) {
+                setAffiliations(affiliationRes.data);
             }
 
             setForm({
@@ -39,6 +39,16 @@ export default function Profile() {
             setLoading(false);
         } catch (err) { console.error(err); setLoading(false); }
     };
+    // ... existing handleUpdate ...
+    // ... inside return ...
+    <div className="flex gap-2 mt-2 flex-wrap justify-center">
+        <div className="badge badge-lg badge-secondary capitalize">{dbUser?.role}</div>
+        {affiliations.map(aff => (
+            <div key={aff._id} className="badge badge-lg badge-outline gap-1">
+                🏢 {aff.companyName}
+            </div>
+        ))}
+    </div>
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -90,11 +100,11 @@ export default function Profile() {
                         <p className="text-gray-500">{user?.email}</p>
                         <div className="flex gap-2 mt-2">
                             <div className="badge badge-lg badge-secondary capitalize">{dbUser?.role}</div>
-                            {affiliation && (
-                                <div className="badge badge-lg badge-outline gap-1">
-                                    🏢 {affiliation.companyName}
+                            {affiliations.map(aff => (
+                                <div key={aff._id} className="badge badge-lg badge-outline gap-1">
+                                    🏢 {aff.companyName}
                                 </div>
-                            )}
+                            ))}
                         </div>
                     </div>
 
@@ -107,8 +117,8 @@ export default function Profile() {
 
                             <div className="form-control">
                                 <label className="label"><span className="label-text">Email</span></label>
-                                <input type="email" className="input input-bordered" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
-                                <label className="label"><span className="label-text-alt text-warning">⚠️ Changing email requires re-login</span></label>
+                                <input type="email" className="input input-bordered" value={form.email} readOnly disabled />
+                                <label className="label"><span className="label-text-alt text-gray-400">Email cannot be changed</span></label>
                             </div>
 
                             <div className="form-control">
@@ -192,13 +202,17 @@ export default function Profile() {
                                 <span className="font-semibold">Date of Birth</span>
                                 <span>{dbUser?.dateOfBirth ? new Date(dbUser.dateOfBirth).toLocaleDateString() : 'N/A'}</span>
                             </div>
-                            {/* Show Company if Employee */}
-                            {affiliation && (
+                            {/* Show Companies if Employee */}
+                            {affiliations.length > 0 && (
                                 <div className="flex justify-between border-b pb-2">
-                                    <span className="font-semibold">Company</span>
-                                    <div className="flex items-center gap-2">
-                                        {affiliation.companyLogo && <img src={affiliation.companyLogo} className="w-6 h-6 rounded" alt="" />}
-                                        <span>{affiliation.companyName}</span>
+                                    <span className="font-semibold">Companies</span>
+                                    <div className="flex flex-col gap-2">
+                                        {affiliations.map(aff => (
+                                            <div key={aff._id} className="flex items-center gap-2 justify-end">
+                                                {aff.companyLogo && <img src={aff.companyLogo} className="w-6 h-6 rounded" alt="" />}
+                                                <span>{aff.companyName}</span>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             )}
